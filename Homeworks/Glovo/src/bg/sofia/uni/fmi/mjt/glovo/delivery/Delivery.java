@@ -18,4 +18,28 @@ public class Delivery {
         this.price = price;
         this.estimatedTime = estimatedTime;
     }
+
+    public Location getClient() {
+        return client;
+    }
+
+    public Location getRestaurant() {
+        return restaurant;
+    }
+
+    public Location getDeliveryGuy() {
+        return deliveryGuy;
+    }
+
+    public String getFoodItem() {
+        return foodItem;
+    }
+
+    public double getPrice() {
+        return price;
+    }
+
+    public int getEstimatedTime() {
+        return estimatedTime;
+    }
 }

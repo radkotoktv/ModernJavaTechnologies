@@ -97,13 +97,25 @@ public class ControlCenter implements ControlCenterApi {
             return null;
         }
 
+        if (maxTime == -1) {
+            maxTime = Integer.MAX_VALUE;
+        }
+        if (maxPrice == -1) {
+            maxPrice = Double.MAX_VALUE;
+        }
+
         switch (shippingMethod) {
             case CHEAPEST: {
                 deliveryGuys.sort(new DeliveryInfoPriceComparator());
                 if (deliveryGuys.getFirst().getPrice() > maxPrice) {
                     return null;
                 }
-                System.out.println("Cheapest" + deliveryGuys.getFirst().getPrice());
+
+                for (DeliveryInfo deliveryGuy : deliveryGuys) {
+                    if (deliveryGuy.getEstimatedTime() <= maxTime) {
+                        return deliveryGuy;
+                    }
+                }
                 break;
             }
             case FASTEST: {
@@ -111,11 +123,16 @@ public class ControlCenter implements ControlCenterApi {
                 if (deliveryGuys.getFirst().getEstimatedTime() > maxTime) {
                     return null;
                 }
-                System.out.println("Fastest " + deliveryGuys.getFirst().getEstimatedTime());
+
+                for (DeliveryInfo deliveryGuy : deliveryGuys) {
+                    if (deliveryGuy.getPrice() <= maxPrice) {
+                        return deliveryGuy;
+                    }
+                }
                 break;
             }
         }
-        return deliveryGuys.getFirst();
+        return null;
     }
 
     @Override
