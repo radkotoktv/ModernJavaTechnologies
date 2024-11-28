@@ -47,33 +47,35 @@ public class ControlCenter implements ControlCenterApi {
 
         Queue<Location> spis = new LinkedList<>();
         ArrayList<DeliveryInfo> deliveries = new ArrayList<>();
-        int counter = 0;
-        int upCounter = 1;
+        int level = 1;
+        int remaining = 1;
         spis.add(startLocation);
         visited[startLocation.getX()][startLocation.getY()] = true;
         while (!spis.isEmpty()) {
             Location top = spis.poll();
-            upCounter--;
-            if (upCounter <= 0) {
-                counter++;
-                upCounter = spis.size();
-            }
+            remaining--;
             for (int i = 0; i < 4; i++) {
                 int x = top.getX() + verticalDirection[i];
                 int y = top.getY() + horizontalDirection[i];
-                if(x < 0 || x >= mapLayout.length || y < 0 || y >= mapLayout[0].length) {
+                if (x < 0 || x >= mapLayout.length || y < 0 || y >= mapLayout[0].length) {
                     continue;
                 }
+
                 if (!visited[x][y]) {
                     if (mapLayout[x][y] == DELIVERY_GUY_CAR.getSymbol()) {
-                        deliveries.add(new DeliveryInfo(new Location(x, y), counter * CAR.getPricePerKilometer(), counter * CAR.getTimePerKilometer(), CAR));
+                        deliveries.add(new DeliveryInfo(new Location(x, y), level * CAR.getPricePerKilometer(), level * CAR.getTimePerKilometer(), CAR));
                     }
                     else if (mapLayout[x][y] == DELIVERY_GUY_BIKE.getSymbol()) {
-                        deliveries.add(new DeliveryInfo(new Location(x, y), counter * BIKE.getPricePerKilometer(), counter * BIKE.getTimePerKilometer(), BIKE));
+                        deliveries.add(new DeliveryInfo(new Location(x, y), level * BIKE.getPricePerKilometer(), level * BIKE.getTimePerKilometer(), BIKE));
                     }
                     visited[x][y] = true;
                     spis.add(new Location(x, y));
                 }
+            }
+
+            if (remaining == 0) {
+                level++;
+                remaining = spis.size();
             }
         }
         return deliveries;
