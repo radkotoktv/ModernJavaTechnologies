@@ -14,4 +14,20 @@ public class DeliveryInfo {
         this.estimatedTime = estimatedTime;
         this.deliveryType = deliveryType;
     }
+
+    public Location getDeliveryGuyLocation() {
+        return deliveryGuyLocation;
+    }
+
+    public double getPrice() {
+        return price;
+    }
+
+    public int getEstimatedTime() {
+        return estimatedTime;
+    }
+
+    public DeliveryType getDeliveryType() {
+        return deliveryType;
+    }
 }
