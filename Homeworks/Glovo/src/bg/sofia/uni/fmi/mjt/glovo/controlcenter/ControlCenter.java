@@ -1,5 +1,7 @@
 package bg.sofia.uni.fmi.mjt.glovo.controlcenter;
 
+import bg.sofia.uni.fmi.mjt.glovo.comparator.DeliveryInfoPriceComparator;
+import bg.sofia.uni.fmi.mjt.glovo.comparator.DeliveryInfoTimeComparator;
 import bg.sofia.uni.fmi.mjt.glovo.controlcenter.map.Location;
 import bg.sofia.uni.fmi.mjt.glovo.controlcenter.map.MapEntity;
 import bg.sofia.uni.fmi.mjt.glovo.controlcenter.map.MapEntityType;
@@ -7,23 +9,25 @@ import bg.sofia.uni.fmi.mjt.glovo.delivery.DeliveryInfo;
 import bg.sofia.uni.fmi.mjt.glovo.delivery.DeliveryType;
 import bg.sofia.uni.fmi.mjt.glovo.delivery.ShippingMethod;
 
+
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.Queue;
 
-import static bg.sofia.uni.fmi.mjt.glovo.controlcenter.map.MapEntityType.DELIVERY_GUY_BIKE;
-import static bg.sofia.uni.fmi.mjt.glovo.controlcenter.map.MapEntityType.DELIVERY_GUY_CAR;
-import static bg.sofia.uni.fmi.mjt.glovo.delivery.DeliveryType.BIKE;
-import static bg.sofia.uni.fmi.mjt.glovo.delivery.DeliveryType.CAR;
-
 public class ControlCenter implements ControlCenterApi {
     private final char[][] mapLayout;
+    private int clientDistance;
 
     public ControlCenter(char[][] mapLayout) {
         this.mapLayout = mapLayout;
+        clientDistance = 0;
     }
 
-    public ArrayList<DeliveryInfo> findAllDeliveryGuys(Location restaurantLocation) {
+    public int getClientDistance() {
+        return clientDistance;
+    }
+
+    public ArrayList<DeliveryInfo> findAllDeliveryGuys(Location restaurantLocation, Location clientLocation) {
         boolean[][] visited = new boolean[mapLayout.length][mapLayout[0].length];
         for (int i = 0; i < mapLayout.length; i++) {
             for (int j = 0; j < mapLayout.length; j++) {
@@ -32,10 +36,10 @@ public class ControlCenter implements ControlCenterApi {
                 }
             }
         }
-        return bfs(visited, restaurantLocation);
+        return bfs(visited, restaurantLocation, clientLocation);
     }
 
-    public ArrayList<DeliveryInfo> bfs(boolean[][] visited, Location startLocation) {
+    public ArrayList<DeliveryInfo> bfs(boolean[][] visited, Location startLocation, Location clientLocation) {
         int[] horizontalDirection = {-1, 0, 1, 0};
         int[] verticalDirection = {0, 1, 0, -1};
 
@@ -56,10 +60,14 @@ public class ControlCenter implements ControlCenterApi {
                 }
 
                 if (!visited[x][y]) {
+                    if (x == clientLocation.getX() && y == clientLocation.getY()) {
+                        clientDistance = level;
+                    }
+
                     if (mapLayout[x][y] != '.' && mapLayout[x][y] != 'R' && mapLayout[x][y] != 'C') {
                         for (DeliveryType type : DeliveryType.values()) {
                             if (mapLayout[x][y] == type.getSymbol()) {
-                                deliveries.add(new DeliveryInfo(new Location(x, y), level * type.getPricePerKilometer(), level * type.getTimePerKilometer(), type));
+                                deliveries.add(new DeliveryInfo(new Location(x, y), level, level, type));
                             }
                         }
                     }
@@ -73,12 +81,41 @@ public class ControlCenter implements ControlCenterApi {
                 remaining = spis.size();
             }
         }
+
+        for (DeliveryInfo deliveryGuy : deliveries) {
+            deliveryGuy.setPrice((deliveryGuy.getPrice() + clientDistance) * deliveryGuy.getDeliveryType().getPricePerKilometer());
+            deliveryGuy.setEstimatedTime((deliveryGuy.getEstimatedTime() + clientDistance) * deliveryGuy.getDeliveryType().getTimePerKilometer());
+        }
+
         return deliveries;
     }
 
     @Override
     public DeliveryInfo findOptimalDeliveryGuy(Location restaurantLocation, Location clientLocation, double maxPrice, int maxTime, ShippingMethod shippingMethod) {
-        return null;
+        ArrayList<DeliveryInfo> deliveryGuys = findAllDeliveryGuys(restaurantLocation, clientLocation);
+        if (deliveryGuys.isEmpty()) {
+            return null;
+        }
+
+        switch (shippingMethod) {
+            case CHEAPEST: {
+                deliveryGuys.sort(new DeliveryInfoPriceComparator());
+                if (deliveryGuys.getFirst().getPrice() > maxPrice) {
+                    return null;
+                }
+                System.out.println("Cheapest" + deliveryGuys.getFirst().getPrice());
+                break;
+            }
+            case FASTEST: {
+                deliveryGuys.sort(new DeliveryInfoTimeComparator());
+                if (deliveryGuys.getFirst().getEstimatedTime() > maxTime) {
+                    return null;
+                }
+                System.out.println("Fastest " + deliveryGuys.getFirst().getEstimatedTime());
+                break;
+            }
+        }
+        return deliveryGuys.getFirst();
     }
 
     @Override
