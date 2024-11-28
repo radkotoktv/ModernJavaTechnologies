@@ -54,7 +54,7 @@ public class ControlCenter implements ControlCenterApi {
         while (!spis.isEmpty()) {
             Location top = spis.poll();
             upCounter--;
-            if (upCounter == 0) {
+            if (upCounter <= 0) {
                 counter++;
                 upCounter = spis.size();
             }
