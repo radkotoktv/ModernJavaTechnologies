@@ -19,4 +19,11 @@ public enum DeliveryType {
     public int getTimePerKilometer() {
         return this.timePerKilometer;
     }
+
+    public char getSymbol() {
+        return switch(this) {
+            case CAR -> 'A';
+            case BIKE -> 'B';
+        };
+    }
 }

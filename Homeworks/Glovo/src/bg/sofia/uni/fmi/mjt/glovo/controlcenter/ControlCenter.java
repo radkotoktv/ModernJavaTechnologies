@@ -2,7 +2,9 @@ package bg.sofia.uni.fmi.mjt.glovo.controlcenter;
 
 import bg.sofia.uni.fmi.mjt.glovo.controlcenter.map.Location;
 import bg.sofia.uni.fmi.mjt.glovo.controlcenter.map.MapEntity;
+import bg.sofia.uni.fmi.mjt.glovo.controlcenter.map.MapEntityType;
 import bg.sofia.uni.fmi.mjt.glovo.delivery.DeliveryInfo;
+import bg.sofia.uni.fmi.mjt.glovo.delivery.DeliveryType;
 import bg.sofia.uni.fmi.mjt.glovo.delivery.ShippingMethod;
 
 import java.util.ArrayList;
@@ -20,14 +22,6 @@ public class ControlCenter implements ControlCenterApi {
     public ControlCenter(char[][] mapLayout) {
         this.mapLayout = mapLayout;
     }
-
-//    char[][] layout = {
-//            {'#', '#', '#', '.', '#'},
-//            {'#', '.', 'B', 'R', '.'},
-//            {'.', '.', '#', '.', '#'},
-//            {'#', 'C', '.', 'A', '.'},
-//            {'#', '.', '#', '#', '#'}
-//    };
 
     public ArrayList<DeliveryInfo> findAllDeliveryGuys(Location restaurantLocation) {
         boolean[][] visited = new boolean[mapLayout.length][mapLayout[0].length];
@@ -62,11 +56,12 @@ public class ControlCenter implements ControlCenterApi {
                 }
 
                 if (!visited[x][y]) {
-                    if (mapLayout[x][y] == DELIVERY_GUY_CAR.getSymbol()) {
-                        deliveries.add(new DeliveryInfo(new Location(x, y), level * CAR.getPricePerKilometer(), level * CAR.getTimePerKilometer(), CAR));
-                    }
-                    else if (mapLayout[x][y] == DELIVERY_GUY_BIKE.getSymbol()) {
-                        deliveries.add(new DeliveryInfo(new Location(x, y), level * BIKE.getPricePerKilometer(), level * BIKE.getTimePerKilometer(), BIKE));
+                    if (mapLayout[x][y] != '.' && mapLayout[x][y] != 'R' && mapLayout[x][y] != 'C') {
+                        for (DeliveryType type : DeliveryType.values()) {
+                            if (mapLayout[x][y] == type.getSymbol()) {
+                                deliveries.add(new DeliveryInfo(new Location(x, y), level * type.getPricePerKilometer(), level * type.getTimePerKilometer(), type));
+                            }
+                        }
                     }
                     visited[x][y] = true;
                     spis.add(new Location(x, y));
@@ -88,6 +83,16 @@ public class ControlCenter implements ControlCenterApi {
 
     @Override
     public MapEntity[][] getLayout() {
-        return new MapEntity[][]{};
+        MapEntity[][] mapEntities = new MapEntity[mapLayout.length][mapLayout[0].length];
+        for (int i = 0; i < mapLayout.length; i++) {
+            for (int j = 0; j < mapLayout[0].length; j++) {
+                for (MapEntityType type : MapEntityType.values()) {
+                    if (mapLayout[i][j] == type.getSymbol()) {
+                        mapEntities[i][j] = new MapEntity(new Location(i, j), type);
+                    }
+                }
+            }
+        }
+        return mapEntities;
     }
 }

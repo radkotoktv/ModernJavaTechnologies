@@ -8,4 +8,12 @@ public class MapEntity {
         this.location = location;
         this.type = type;
     }
+
+    public Location getLocation() {
+        return location;
+    }
+
+    public MapEntityType getType() {
+        return type;
+    }
 }
