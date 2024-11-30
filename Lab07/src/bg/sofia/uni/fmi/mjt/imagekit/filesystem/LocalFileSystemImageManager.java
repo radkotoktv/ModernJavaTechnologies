@@ -1,15 +1,11 @@
 package bg.sofia.uni.fmi.mjt.imagekit.filesystem;
 
 import javax.imageio.ImageIO;
-import javax.imageio.ImageReader;
-import javax.imageio.ImageWriter;
 import java.awt.image.BufferedImage;
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 public class LocalFileSystemImageManager implements FileSystemImageManager {
     @Override
@@ -19,7 +15,7 @@ public class LocalFileSystemImageManager implements FileSystemImageManager {
                 throw new IllegalArgumentException("File is null");
             }
 
-            if (!imageFile.exists()) {
+            if (!imageFile.exists() || !imageFile.isFile()) {
                 throw new IOException("File does not exist or is not a regular file!");
             }
 
@@ -74,14 +70,17 @@ public class LocalFileSystemImageManager implements FileSystemImageManager {
                 throw new IOException("imageFile already exists");
             }
 
-            if (imageFile.getParent() == null) {
-                throw new IOException("Parent directory is null");
-            }
+//            if (imageFile.getParent() == null) {
+//                throw new IOException("Parent directory is null");
+//            }
         } catch (IllegalArgumentException | IOException e) {
             throw e;
         }
 
-        FileOutputStream os = new FileOutputStream(imageFile);
-        os.close();
+        String format = imageFile.getName().substring(imageFile.getName().lastIndexOf('.') + 1);
+        boolean success = ImageIO.write(image, format, imageFile);
+        if (!success) {
+            throw new IOException("Failed to write the image to the file. Unsupported format!");
+        }
     }
 }
