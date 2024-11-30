@@ -8,7 +8,8 @@ import bg.sofia.uni.fmi.mjt.glovo.controlcenter.map.MapEntityType;
 import bg.sofia.uni.fmi.mjt.glovo.delivery.DeliveryInfo;
 import bg.sofia.uni.fmi.mjt.glovo.delivery.DeliveryType;
 import bg.sofia.uni.fmi.mjt.glovo.delivery.ShippingMethod;
-
+import bg.sofia.uni.fmi.mjt.glovo.exception.NoAvailableDeliveryGuyException;
+import bg.sofia.uni.fmi.mjt.glovo.exception.IllegalMapLayoutException;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -21,6 +22,28 @@ public class ControlCenter implements ControlCenterApi {
     public ControlCenter(char[][] mapLayout) {
         this.mapLayout = mapLayout;
         clientDistance = 0;
+        try {
+            if (mapLayout.length == 0) {
+                throw new IllegalMapLayoutException("Map layout is empty!");
+            }
+
+            for (char[] chars : mapLayout) {
+                for (int j = 0; j < mapLayout[0].length; j++) {
+                    boolean valid = false;
+                    for (MapEntityType type : MapEntityType.values()) {
+                        if (chars[j] == type.getSymbol()) {
+                            valid = true;
+                            break;
+                        }
+                    }
+                    if (!valid) {
+                        throw new IllegalMapLayoutException("Invalid map layout!");
+                    }
+                }
+            }
+        } catch (IllegalMapLayoutException e) {
+            throw e; // CAN BE MODIFIED LATER LMAO
+        }
     }
 
     public int getClientDistance() {
@@ -58,12 +81,10 @@ public class ControlCenter implements ControlCenterApi {
                 if (x < 0 || x >= mapLayout.length || y < 0 || y >= mapLayout[0].length) {
                     continue;
                 }
-
                 if (!visited[x][y]) {
                     if (x == clientLocation.getX() && y == clientLocation.getY()) {
                         clientDistance = level;
                     }
-
                     if (mapLayout[x][y] != '.' && mapLayout[x][y] != 'R' && mapLayout[x][y] != 'C') {
                         for (DeliveryType type : DeliveryType.values()) {
                             if (mapLayout[x][y] == type.getSymbol()) {
@@ -83,18 +104,26 @@ public class ControlCenter implements ControlCenterApi {
         }
 
         for (DeliveryInfo deliveryGuy : deliveries) {
-            deliveryGuy.setPrice((deliveryGuy.getPrice() + clientDistance) * deliveryGuy.getDeliveryType().getPricePerKilometer());
-            deliveryGuy.setEstimatedTime((deliveryGuy.getEstimatedTime() + clientDistance) * deliveryGuy.getDeliveryType().getTimePerKilometer());
+            deliveryGuy.setPrice((deliveryGuy.getPrice() + clientDistance) *
+                                  deliveryGuy.getDeliveryType().getPricePerKilometer());
+
+            deliveryGuy.setEstimatedTime((deliveryGuy.getEstimatedTime() + clientDistance) *
+                                          deliveryGuy.getDeliveryType().getTimePerKilometer());
         }
 
         return deliveries;
     }
 
     @Override
-    public DeliveryInfo findOptimalDeliveryGuy(Location restaurantLocation, Location clientLocation, double maxPrice, int maxTime, ShippingMethod shippingMethod) {
+    public DeliveryInfo findOptimalDeliveryGuy(Location restaurantLocation, Location clientLocation,
+                                               double maxPrice, int maxTime, ShippingMethod shippingMethod) {
         ArrayList<DeliveryInfo> deliveryGuys = findAllDeliveryGuys(restaurantLocation, clientLocation);
-        if (deliveryGuys.isEmpty()) {
-            return null;
+        try {
+            if (deliveryGuys.isEmpty()) {
+                throw new NoAvailableDeliveryGuyException("No delivery guy can reach the client");
+            }
+        } catch (NoAvailableDeliveryGuyException e) {
+            throw e; // CAN BE MODIFIED LATER LMAO
         }
 
         if (maxTime == -1) {
@@ -132,6 +161,15 @@ public class ControlCenter implements ControlCenterApi {
                 break;
             }
         }
+
+        try {
+            if (deliveryGuys.isEmpty()) {
+                throw new NoAvailableDeliveryGuyException("No available delivery guy found within the constraints!");
+            }
+        } catch (NoAvailableDeliveryGuyException e) {
+            throw e; // CAN BE MODIFIED LATER LMAO
+        }
+
         return null;
     }
 

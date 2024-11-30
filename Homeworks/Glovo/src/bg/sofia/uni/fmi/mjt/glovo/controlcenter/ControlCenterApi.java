@@ -4,6 +4,7 @@ import bg.sofia.uni.fmi.mjt.glovo.controlcenter.map.Location;
 import bg.sofia.uni.fmi.mjt.glovo.controlcenter.map.MapEntity;
 import bg.sofia.uni.fmi.mjt.glovo.delivery.DeliveryInfo;
 import bg.sofia.uni.fmi.mjt.glovo.delivery.ShippingMethod;
+import bg.sofia.uni.fmi.mjt.glovo.exception.NoAvailableDeliveryGuyException;
 
 public interface ControlCenterApi {
 
@@ -19,6 +20,7 @@ public interface ControlCenterApi {
      * @param shippingMethod     The method for shipping the delivery.
      * @return A DeliveryInfo object containing the optimal delivery guy, the total cost,
      * the total time, and the delivery type. Returns null if no valid path is found.
+     * @throws NoAvailableDeliveryGuyException If no delivery guy is found to deliver the order within the given constraints.
      */
     DeliveryInfo findOptimalDeliveryGuy(Location restaurantLocation, Location clientLocation,
                                         double maxPrice, int maxTime, ShippingMethod shippingMethod);

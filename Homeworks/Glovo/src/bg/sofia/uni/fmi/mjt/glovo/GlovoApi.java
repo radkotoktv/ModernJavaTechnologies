@@ -2,6 +2,7 @@ package bg.sofia.uni.fmi.mjt.glovo;
 
 import bg.sofia.uni.fmi.mjt.glovo.controlcenter.map.MapEntity;
 import bg.sofia.uni.fmi.mjt.glovo.delivery.Delivery;
+import bg.sofia.uni.fmi.mjt.glovo.exception.IllegalConstraintsException;
 import bg.sofia.uni.fmi.mjt.glovo.exception.NoAvailableDeliveryGuyException;
 import bg.sofia.uni.fmi.mjt.glovo.exception.InvalidOrderException;
 
@@ -54,6 +55,7 @@ public interface GlovoApi {
      * @throws InvalidOrderException           If there is no client or restaurant at the specified location
      *                                         on the map,or if the location is outside the map's defined boundaries.
      * @throws NoAvailableDeliveryGuyException If no delivery guys are available to complete the delivery.
+     * @throws IllegalConstraintsException if the constraints are not valid;
      */
     Delivery getFastestDeliveryUnderPrice(MapEntity client, MapEntity restaurant, String foodItem, double maxPrice)
             throws NoAvailableDeliveryGuyException;
@@ -72,6 +74,7 @@ public interface GlovoApi {
      * @throws InvalidOrderException           If there is no client or restaurant at the specified location
      *                                         on the map, or if the location is outside the map's defined boundaries.
      * @throws NoAvailableDeliveryGuyException If no delivery guys are available to complete the delivery.
+     * @throws IllegalConstraintsException if the constraints are not valid
      */
     Delivery getCheapestDeliveryWithinTimeLimit(MapEntity client, MapEntity restaurant, String foodItem, int maxTime)
             throws NoAvailableDeliveryGuyException;
