@@ -29,7 +29,6 @@ public class MJTOlympics implements Olympics {
         if (competitionResultFetcher == null) {
             throw new IllegalArgumentException("CompetitionResultFetcher cannot be null");
         }
-
         this.competitionResultFetcher = competitionResultFetcher;
         this.registeredCompetitors = new HashSet<>(registeredCompetitors);
         this.nationsMedalTable = new HashMap<>();
