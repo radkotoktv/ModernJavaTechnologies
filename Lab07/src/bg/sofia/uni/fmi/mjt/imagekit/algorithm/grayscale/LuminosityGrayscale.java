@@ -11,9 +11,16 @@ public class LuminosityGrayscale implements GrayscaleAlgorithm {
     private static final int RED_BITWISE = 16;
     private static final int GREEN_BITWISE = 8;
 
-
     @Override
     public BufferedImage process(BufferedImage image) {
+        try {
+            if (image == null) {
+                throw new IllegalArgumentException("Image can not be null");
+            }
+        } catch (IllegalArgumentException e) {
+            throw e;
+        }
+
         BufferedImage newImage = new BufferedImage(image.getWidth(), image.getHeight(), BufferedImage.TYPE_INT_RGB);
         for (int i = 0; i < image.getHeight(); i++) {
             for (int j = 0; j < image.getWidth(); j++) {

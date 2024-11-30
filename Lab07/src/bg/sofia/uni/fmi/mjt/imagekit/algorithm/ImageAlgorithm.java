@@ -6,7 +6,6 @@ import java.awt.image.BufferedImage;
  * Represents an algorithm that processes images.
  */
 public interface ImageAlgorithm {
-
     /**
      * Applies the image processing algorithm to the given image.
      *

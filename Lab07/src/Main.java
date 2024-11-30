@@ -12,7 +12,7 @@ public class Main {
     public static void main(String[] args) throws IOException {
         FileSystemImageManager fsImageManager = new LocalFileSystemImageManager();
 
-        BufferedImage image = fsImageManager.loadImage(new File("kitten.png"));
+        BufferedImage image = fsImageManager.loadImage(null);
 
         ImageAlgorithm grayscaleAlgorithm = new LuminosityGrayscale();
         BufferedImage grayscaleImage = grayscaleAlgorithm.process(image);
