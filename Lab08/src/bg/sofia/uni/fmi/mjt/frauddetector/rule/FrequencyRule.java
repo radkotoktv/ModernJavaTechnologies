@@ -19,7 +19,9 @@ public class FrequencyRule implements Rule {
 
     @Override
     public boolean applicable(List<Transaction> transactions) {
-        LocalDateTime firstDate = transactions.getFirst().transactionDate();
+        if (transactions.isEmpty()) {
+            return false;
+        }
         for (Transaction tr : transactions) {
             LocalDateTime offsetDate = tr.transactionDate();
             boolean appl = transactions.stream()

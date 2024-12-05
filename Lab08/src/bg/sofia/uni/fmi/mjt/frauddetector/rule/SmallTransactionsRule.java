@@ -20,7 +20,7 @@ public class SmallTransactionsRule implements Rule {
         return transactions.stream()
                 .filter(p -> p.transactionAmount() <= amountThreshold)
                 .count()
-                > countThreshold;
+                >= countThreshold;
     }
 
     @Override

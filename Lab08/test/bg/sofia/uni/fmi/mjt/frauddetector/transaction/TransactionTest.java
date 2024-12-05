@@ -1,6 +1,6 @@
 package bg.sofia.uni.fmi.mjt.frauddetector.transaction;
 
-import org.junit.jupiter.api.Test;
+import org.junit.Test;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -8,9 +8,9 @@ import java.time.format.DateTimeFormatter;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-class TransactionTest {
+public class TransactionTest {
     @Test
-    void testValidTransactionCreation() {
+    public void testValidTransactionCreation() {
         LocalDateTime date = LocalDateTime.now();
         Transaction transaction = new Transaction("123456", "account1", 100.0, date, "location", Channel.ONLINE);
 
@@ -23,7 +23,7 @@ class TransactionTest {
     }
 
     @Test
-    void testTransactionWithNullFieldsThrowsException() {
+    public void testTransactionWithNullFieldsThrowsException() {
         LocalDateTime date = LocalDateTime.now();
         assertThrows(IllegalArgumentException.class, () -> new Transaction(null, "account1", 100.0, date, "location", Channel.ONLINE));
         assertThrows(IllegalArgumentException.class, () -> new Transaction("123456", null, 100.0, date, "location", Channel.ONLINE));
@@ -33,7 +33,7 @@ class TransactionTest {
     }
 
     @Test
-    void testTransactionWithBlankFieldsThrowsException() {
+    public void testTransactionWithBlankFieldsThrowsException() {
         LocalDateTime date = LocalDateTime.now();
         assertThrows(IllegalArgumentException.class, () -> new Transaction("", "account1", 100.0, date, "location", Channel.ONLINE));
         assertThrows(IllegalArgumentException.class, () -> new Transaction("123456", "", 100.0, date, "location", Channel.ONLINE));
@@ -41,13 +41,13 @@ class TransactionTest {
     }
 
     @Test
-    void testTransactionWithNegativeAmountThrowsException() {
+    public void testTransactionWithNegativeAmountThrowsException() {
         LocalDateTime date = LocalDateTime.now();
         assertThrows(IllegalArgumentException.class, () -> new Transaction("123456", "account1", -1.0, date, "location", Channel.ONLINE));
     }
 
     @Test
-    void testValidTransactionOfMethod() {
+    public void testValidTransactionOfMethod() {
         String line = "123456,account1,100.0,2023-12-05 15:30:00,location,ONLINE";
         Transaction transaction = Transaction.of(line);
 
@@ -61,25 +61,25 @@ class TransactionTest {
     }
 
     @Test
-    void testTransactionOfMethodWithInvalidLineFormatThrowsException() {
+    public void testTransactionOfMethodWithInvalidLineFormatThrowsException() {
         String invalidLine = "123456,account1,100.0,2023-12-05 15:30:00,location"; // Missing channel
         assertThrows(IllegalArgumentException.class, () -> Transaction.of(invalidLine));
     }
 
     @Test
-    void testTransactionOfMethodWithInvalidAmountThrowsException() {
+    public void testTransactionOfMethodWithInvalidAmountThrowsException() {
         String invalidLine = "123456,account1,abc,2023-12-05 15:30:00,location,ONLINE"; // Invalid amount
         assertThrows(NumberFormatException.class, () -> Transaction.of(invalidLine));
     }
 
     @Test
-    void testTransactionOfMethodWithInvalidDateThrowsException() {
+    public void testTransactionOfMethodWithInvalidDateThrowsException() {
         String invalidLine = "123456,account1,100.0,invalid-date,location,ONLINE"; // Invalid date
         assertThrows(Exception.class, () -> Transaction.of(invalidLine));
     }
 
     @Test
-    void testTransactionOfMethodWithInvalidChannelThrowsException() {
+    public void testTransactionOfMethodWithInvalidChannelThrowsException() {
         String invalidLine = "123456,account1,100.0,2023-12-05 15:30:00,location,INVALID_CHANNEL"; // Invalid channel
         assertThrows(IllegalArgumentException.class, () -> Transaction.of(invalidLine));
     }
