@@ -17,11 +17,14 @@ public class SmallTransactionsRule implements Rule {
 
     @Override
     public boolean applicable(List<Transaction> transactions) {
-        return false;
+        return transactions.stream()
+                .filter(p -> p.transactionAmount() <= amountThreshold)
+                .count()
+                > countThreshold;
     }
 
     @Override
     public double weight() {
-        return 0;
+        return this.weight;
     }
 }

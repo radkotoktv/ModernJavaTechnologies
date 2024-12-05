@@ -4,4 +4,5 @@ public enum Channel {
     ATM,
     ONLINE,
     BRANCH,
+    Online
 }

@@ -2,6 +2,7 @@ package bg.sofia.uni.fmi.mjt.frauddetector.rule;
 
 import bg.sofia.uni.fmi.mjt.frauddetector.transaction.Transaction;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class LocationsRule implements Rule {
@@ -15,11 +16,19 @@ public class LocationsRule implements Rule {
 
     @Override
     public boolean applicable(List<Transaction> transactions) {
-        return false;
+        List<String> locations = new ArrayList<String>();
+        for (Transaction tr : transactions) {
+            locations.add(tr.location());
+        }
+        return locations.stream()
+                .distinct()
+                .toList()
+                .size()
+                >= threshold;
     }
 
     @Override
     public double weight() {
-        return 0;
+        return this.weight;
     }
 }
