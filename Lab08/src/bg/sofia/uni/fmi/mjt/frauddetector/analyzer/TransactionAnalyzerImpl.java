@@ -21,11 +21,11 @@ public class TransactionAnalyzerImpl implements TransactionAnalyzer {
 
     public TransactionAnalyzerImpl(Reader reader, List<Rule> rules) {
         this.reader = reader;
-        this.transactions = getAllTransactions();
         this.rules = rules;
         if (rules.stream().reduce(0.0, (res, el) -> res + el.weight(), (res, el) -> res + el) != 1) {
             throw new IllegalArgumentException("Sum weight of rules has to be 1");
         }
+        this.transactions = getAllTransactions();
     }
 
     public List<Transaction> getAllTransactions() {
@@ -51,7 +51,8 @@ public class TransactionAnalyzerImpl implements TransactionAnalyzer {
     @Override
     public List<String> allAccountIDs() {
         List<String> accountIDs = new ArrayList<String>();
-        for (Transaction tr : transactions) {
+        List<Transaction> transactionsLocal = allTransactions();
+        for (Transaction tr : transactionsLocal) {
             accountIDs.add(tr.accountID());
         }
         return accountIDs.stream().distinct().toList();
@@ -60,7 +61,8 @@ public class TransactionAnalyzerImpl implements TransactionAnalyzer {
     @Override
     public Map<Channel, Integer> transactionCountByChannel() {
         Map<Channel, Integer> channelTransactions = new HashMap<Channel, Integer>();
-        for (Transaction tr : transactions) {
+        List<Transaction> transactionsLocal = allTransactions();
+        for (Transaction tr : transactionsLocal) {
             if (!channelTransactions.containsKey(tr.channel())) {
                 channelTransactions.put(tr.channel(), 1);
             } else {
@@ -86,7 +88,7 @@ public class TransactionAnalyzerImpl implements TransactionAnalyzer {
             throw new IllegalArgumentException("Wrong accountId");
         }
 
-        return transactions.stream()
+        return allTransactions().stream()
                 .filter(transaction -> transaction.accountID().equals(accountId))
                 .toList();
     }

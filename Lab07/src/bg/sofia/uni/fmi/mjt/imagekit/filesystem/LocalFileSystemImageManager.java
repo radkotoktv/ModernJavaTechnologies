@@ -25,9 +25,9 @@ public class LocalFileSystemImageManager implements FileSystemImageManager {
                 throw new IOException("File is not in one of the supported formats");
             }
 
-            if (imageFile.getParent() == null) {
-                throw new IOException("Parent directory can not be null");
-            }
+//            if (imageFile.getParent() == null) {
+//                throw new IOException("Parent directory can not be null");
+//            }
 
         } catch (IllegalArgumentException | IOException e) {
             throw e;
@@ -74,9 +74,9 @@ public class LocalFileSystemImageManager implements FileSystemImageManager {
                 throw new IOException("imageFile already exists");
             }
 
-            if (imageFile.getParent() == null) {
-                throw new IOException("Parent directory is null");
-            }
+//            if (imageFile.getParent() == null) {
+//                throw new IOException("Parent directory is null");
+//            }
         } catch (IllegalArgumentException | IOException e) {
             throw e;
         }

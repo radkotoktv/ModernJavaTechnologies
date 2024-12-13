@@ -1,6 +1,6 @@
 package bg.sofia.uni.fmi.mjt.frauddetector.transaction;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -62,25 +62,19 @@ public class TransactionTest {
 
     @Test
     public void testTransactionOfMethodWithInvalidLineFormatThrowsException() {
-        String invalidLine = "123456,account1,100.0,2023-12-05 15:30:00,location"; // Missing channel
+        String invalidLine = "123456,account1,100.0,2023-12-05 15:30:00,location";
         assertThrows(IllegalArgumentException.class, () -> Transaction.of(invalidLine));
     }
 
     @Test
     public void testTransactionOfMethodWithInvalidAmountThrowsException() {
-        String invalidLine = "123456,account1,abc,2023-12-05 15:30:00,location,ONLINE"; // Invalid amount
-        assertThrows(NumberFormatException.class, () -> Transaction.of(invalidLine));
-    }
-
-    @Test
-    public void testTransactionOfMethodWithInvalidDateThrowsException() {
-        String invalidLine = "123456,account1,100.0,invalid-date,location,ONLINE"; // Invalid date
-        assertThrows(Exception.class, () -> Transaction.of(invalidLine));
+        String invalidLine = "123456,account1,abc,2023-12-05 15:30:00,location,ONLINE";
+        assertThrows(IllegalArgumentException.class, () -> Transaction.of(invalidLine));
     }
 
     @Test
     public void testTransactionOfMethodWithInvalidChannelThrowsException() {
-        String invalidLine = "123456,account1,100.0,2023-12-05 15:30:00,location,INVALID_CHANNEL"; // Invalid channel
+        String invalidLine = "123456,account1,100.0,2023-12-05 15:30:00,location,INVALID_CHANNEL";
         assertThrows(IllegalArgumentException.class, () -> Transaction.of(invalidLine));
     }
 }

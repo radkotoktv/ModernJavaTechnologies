@@ -12,7 +12,7 @@ public class Main {
     public static void main(String[] args) throws IOException {
         FileSystemImageManager fsImageManager = new LocalFileSystemImageManager();
 
-        BufferedImage image = fsImageManager.loadImage(null);
+        BufferedImage image = fsImageManager.loadImage(new File("src/img/building.png"));
 
         ImageAlgorithm grayscaleAlgorithm = new LuminosityGrayscale();
         BufferedImage grayscaleImage = grayscaleAlgorithm.process(image);
@@ -20,7 +20,7 @@ public class Main {
         ImageAlgorithm sobelEdgeDetection = new SobelEdgeDetection(grayscaleAlgorithm);
         BufferedImage edgeDetectedImage = sobelEdgeDetection.process(image);
 
-        fsImageManager.saveImage(grayscaleImage, new File("kitten-grayscale.png"));
-        fsImageManager.saveImage(edgeDetectedImage, new File("kitten-edge-detected.png"));
+        fsImageManager.saveImage(grayscaleImage, new File("building-grayscale.png"));
+        fsImageManager.saveImage(edgeDetectedImage, new File("building-edge-detected.png"));
     }
 }
