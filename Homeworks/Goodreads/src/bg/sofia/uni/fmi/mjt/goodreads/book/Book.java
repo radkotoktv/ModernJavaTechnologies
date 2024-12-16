@@ -21,9 +21,10 @@ public record Book(
     static final int RATING_INDEX = 5;
     static final int RATINGCOUNT_INDEX = 6;
     static final int URL_INDEX = 7;
+    static final int TOKENS_SIZE = 8;
 
     public static Book of(String[] tokens) {
-        if (tokens == null || tokens.length != 8) {
+        if (tokens == null || tokens.length != TOKENS_SIZE) {
             throw new IllegalArgumentException("Invalid input array. Expected an array of 8 elements.");
         }
 
