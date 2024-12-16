@@ -14,10 +14,7 @@ public class CompositeSimilarityCalculator implements SimilarityCalculator {
 
     @Override
     public double calculateSimilarity(Book first, Book second) {
-        if (first == null || second == null) {
-            throw new IllegalArgumentException("Cannot compare null to a book!");
-        }
-        return 0.0;
+        throw new UnsupportedOperationException("Not yet implemented");
     }
 
 }

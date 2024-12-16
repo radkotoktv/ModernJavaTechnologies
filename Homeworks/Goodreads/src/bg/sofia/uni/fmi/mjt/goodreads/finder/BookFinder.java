@@ -3,6 +3,7 @@ package bg.sofia.uni.fmi.mjt.goodreads.finder;
 import bg.sofia.uni.fmi.mjt.goodreads.book.Book;
 import bg.sofia.uni.fmi.mjt.goodreads.tokenizer.TextTokenizer;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -43,12 +44,47 @@ public class BookFinder implements BookFinderAPI {
 
     @Override
     public List<Book> searchByGenres(Set<String> genres, MatchOption option) {
-        throw new UnsupportedOperationException("Not yet implemented");
+        if (genres == null) {
+            throw new IllegalArgumentException("genres cannot be null!");
+        }
+
+        List<Book> acceptedBooks = new ArrayList<>();
+        for (Book book : books) {
+            boolean matches = false;
+            switch (option) {
+                case MATCH_ALL -> {
+                    matches = book.genres().containsAll(genres);
+                }
+                case MATCH_ANY -> {
+                    matches = genres.stream()
+                            .anyMatch(book.genres()::contains);
+                }
+            }
+            if (matches) {
+                acceptedBooks.add(book);
+            }
+        }
+        return acceptedBooks;
     }
 
     @Override
     public List<Book> searchByKeywords(Set<String> keywords, MatchOption option) {
-        throw new UnsupportedOperationException("Not yet implemented");
+        List<Book> acceptedBooks = new ArrayList<>();
+        for (Book book : books) {
+            boolean matches = false;
+            switch (option) {
+                case MATCH_ALL -> {
+                    matches = book.genres().containsAll(keywords);
+                }
+                case MATCH_ANY -> {
+                    matches = book.genres()
+                            .stream().anyMatch(book.genres()::contains);
+                }
+            }
+            if (matches) {
+                acceptedBooks.add(book);
+            }
+        }
+        return acceptedBooks;
     }
-
 }

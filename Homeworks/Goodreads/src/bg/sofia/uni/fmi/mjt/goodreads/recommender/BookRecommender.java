@@ -8,7 +8,6 @@ import java.util.SortedMap;
 
 public class BookRecommender implements BookRecommenderAPI {
 
-    // initialBooks se razlichava ot tova v git
     public BookRecommender(Set<Book> initialBooks, SimilarityCalculator calculator) {
         throw new UnsupportedOperationException("Not yet implemented");
     }
