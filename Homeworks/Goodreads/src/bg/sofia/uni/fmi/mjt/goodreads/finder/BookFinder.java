@@ -72,13 +72,14 @@ public class BookFinder implements BookFinderAPI {
         List<Book> acceptedBooks = new ArrayList<>();
         for (Book book : books) {
             boolean matches = false;
+            List<String> tokenized = tokenizer.tokenize(book.description());
             switch (option) {
                 case MATCH_ALL -> {
-                    matches = book.genres().containsAll(keywords);
+                    matches = tokenized.containsAll(keywords);
                 }
                 case MATCH_ANY -> {
-                    matches = book.genres()
-                            .stream().anyMatch(book.genres()::contains);
+                    matches = keywords.stream()
+                            .anyMatch(tokenized::contains);
                 }
             }
             if (matches) {

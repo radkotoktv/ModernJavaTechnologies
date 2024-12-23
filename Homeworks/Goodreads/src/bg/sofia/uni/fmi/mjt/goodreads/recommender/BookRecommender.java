@@ -6,6 +6,9 @@ import bg.sofia.uni.fmi.mjt.goodreads.recommender.similaritycalculator.Similarit
 import java.util.Set;
 import java.util.SortedMap;
 import java.util.TreeMap;
+import java.util.Comparator;
+
+import static java.lang.Math.min;
 
 public class BookRecommender implements BookRecommenderAPI {
     private final Set<Book> initialBooks;
@@ -21,25 +24,30 @@ public class BookRecommender implements BookRecommenderAPI {
         if (origin == null) {
             throw new IllegalArgumentException("Origin book cannot be null!");
         }
-
         if (maxN <= 0) {
             throw new IllegalArgumentException("Cannot show 0 entries!");
         }
+        int left = min(maxN, initialBooks.size());
 
-        SortedMap<Book, Double> similarBooks = new TreeMap<Book, Double>();
+        SortedMap<Book, Double> similarBooks = new TreeMap<>(Comparator.comparingDouble(
+                (Book b) -> calculator.calculateSimilarity(origin, b))
+                .thenComparing(Book::title)
+                .reversed()
+        );
 
         for (Book book : initialBooks) {
             similarBooks.put(book, calculator.calculateSimilarity(origin, book));
         }
-
-        int left = maxN;
-        SortedMap<Book, Double> similarBooks2 = new TreeMap<Book, Double>();
+        SortedMap<Book, Double> result = new TreeMap<>(Comparator.comparingDouble(
+                        (Book b) -> calculator.calculateSimilarity(origin, b))
+                .thenComparing(Book::title)
+                .reversed()
+        );
         while (left > 0) {
-            similarBooks2.put(similarBooks.firstEntry().getKey(), similarBooks.firstEntry().getValue());
+            result.put(similarBooks.firstKey(), similarBooks.get(similarBooks.firstKey()));
             similarBooks.remove(similarBooks.firstKey());
             left--;
         }
-        return similarBooks2;
+        return result;
     }
-
 }

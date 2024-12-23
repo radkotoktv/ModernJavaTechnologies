@@ -19,7 +19,7 @@ public record Book(
     static final int DESCRIPTION_INDEX = 3;
     static final int GENRES_INDEX = 4;
     static final int RATING_INDEX = 5;
-    static final int RATINGCOUNT_INDEX = 6;
+    static final int RATING_COUNT_INDEX = 6;
     static final int URL_INDEX = 7;
     static final int TOKENS_SIZE = 8;
 
@@ -40,7 +40,7 @@ public record Book(
                 .toList();
 
         double rating = Double.parseDouble(tokens[RATING_INDEX]);
-        int ratingCount = Integer.parseInt(tokens[RATINGCOUNT_INDEX].replace(",", ""));
+        int ratingCount = Integer.parseInt(tokens[RATING_COUNT_INDEX].replace(",", ""));
         String url = tokens[URL_INDEX];
 
         return new Book(id, title, author, description, genres, rating, ratingCount, url);
