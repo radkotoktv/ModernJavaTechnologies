@@ -40,7 +40,7 @@ public record Book(
                 .toList();
 
         double rating = Double.parseDouble(tokens[RATING_INDEX]);
-        int ratingCount = Integer.parseInt(tokens[RATINGCOUNT_INDEX].replace(",", "")); // Remove commas in the number
+        int ratingCount = Integer.parseInt(tokens[RATINGCOUNT_INDEX].replace(",", ""));
         String url = tokens[URL_INDEX];
 
         return new Book(id, title, author, description, genres, rating, ratingCount, url);

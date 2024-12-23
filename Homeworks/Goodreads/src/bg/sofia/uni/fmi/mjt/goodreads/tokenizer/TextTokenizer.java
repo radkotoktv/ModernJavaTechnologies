@@ -21,7 +21,9 @@ public class TextTokenizer {
     }
 
     public List<String> tokenize(String input) {
-        List<String> words = Arrays.asList(input.split(" "));
+        List<String> words = Arrays.asList(input.replaceAll(",", "")
+                        .replaceAll("[.]", "")
+                        .split(" "));
         return words.stream()
                 .filter(s -> !stopwords().contains(s))
                 .toList();
