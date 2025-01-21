@@ -2,7 +2,13 @@ package bg.sofia.uni.fmi.mjt.newsfeed;
 
 import bg.sofia.uni.fmi.mjt.newsfeed.article.Article;
 import bg.sofia.uni.fmi.mjt.newsfeed.category.Category;
-import bg.sofia.uni.fmi.mjt.newsfeed.exception.*;
+import bg.sofia.uni.fmi.mjt.newsfeed.exception.ApiKeyException;
+import bg.sofia.uni.fmi.mjt.newsfeed.exception.ApiResponseException;
+import bg.sofia.uni.fmi.mjt.newsfeed.exception.IllegalPageSizeException;
+import bg.sofia.uni.fmi.mjt.newsfeed.exception.InvalidParameterException;
+import bg.sofia.uni.fmi.mjt.newsfeed.exception.RateLimitedException;
+import bg.sofia.uni.fmi.mjt.newsfeed.exception.SourceException;
+import bg.sofia.uni.fmi.mjt.newsfeed.exception.UnexpectedErrorException;
 import bg.sofia.uni.fmi.mjt.newsfeed.parseresult.ApiResponse;
 import bg.sofia.uni.fmi.mjt.newsfeed.parseresult.ErrorResponse;
 import bg.sofia.uni.fmi.mjt.newsfeed.parseresult.OKResponse;
@@ -23,6 +29,9 @@ public class WebNewsApi {
     private static final String BASE_URL = "/v2/top-headlines";
     private static final String HOST = "newsapi.org";
     private static final int HTTP_PORT = 80;
+
+    private static final int MIN_PAGE_SIZE = 1;
+    private static final int MAX_PAGE_SIZE = 100;
 
     private final String keywords;
     private final String country;
@@ -54,7 +63,7 @@ public class WebNewsApi {
         if (keywords == null || keywords.isBlank()) {
             throw new IllegalArgumentException("Keywords must not be null or empty");
         }
-        if (pageSize < 1 || pageSize > 100) {
+        if (pageSize < MIN_PAGE_SIZE || pageSize > MAX_PAGE_SIZE) {
             throw new IllegalPageSizeException("Page size must be between 1 and 100");
         }
         StringBuilder query = new StringBuilder(BASE_URL)
@@ -66,7 +75,7 @@ public class WebNewsApi {
             query.append("&country=").append(country);
         }
 
-        if(category != null) {
+        if (category != null) {
             query.append("&category=").append(category.getCategory());
         }
 
@@ -87,12 +96,14 @@ public class WebNewsApi {
     public ApiResponse handleResponse(StringBuilder response) throws ApiResponseException {
         Gson gson = new Gson();
         if (response.toString().contains("status") && response.toString().contains("code")) {
-            Type type = new TypeToken<ErrorResponse>() {}.getType();
+            Type type = new TypeToken<ErrorResponse>() {
+            }.getType();
             ErrorResponse result = gson.fromJson(response.toString(), type);
             handleErrorResponse(result);
         }
 
-        Type type = new TypeToken<OKResponse>() {}.getType();
+        Type type = new TypeToken<OKResponse>() {
+        }.getType();
         return gson.<OKResponse>fromJson(response.toString(), type);
     }
 

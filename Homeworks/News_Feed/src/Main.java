@@ -2,13 +2,13 @@ import bg.sofia.uni.fmi.mjt.newsfeed.WebNewsApi;
 import bg.sofia.uni.fmi.mjt.newsfeed.article.Article;
 import bg.sofia.uni.fmi.mjt.newsfeed.exception.ApiResponseException;
 
-import java.io.IOException;
 import java.util.List;
 
-
 public class Main {
-    public static void main(String[] args) throws ApiResponseException, IOException {
-        WebNewsApi webNewsApi = new WebNewsApi("Trump us", "us", 20, null);
+    private static final int TEMP_PAGE_SIZE = 20;
+
+    public static void main(String[] args) throws ApiResponseException {
+        WebNewsApi webNewsApi = new WebNewsApi("Trump us", "us", TEMP_PAGE_SIZE, null);
         List<Article> articles = webNewsApi.fetchArticles();
 
         for (Article article : articles) {
