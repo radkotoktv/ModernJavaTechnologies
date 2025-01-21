@@ -3,6 +3,7 @@ package bg.sofia.uni.fmi.mjt.newsfeed;
 import bg.sofia.uni.fmi.mjt.newsfeed.article.Article;
 import bg.sofia.uni.fmi.mjt.newsfeed.category.Category;
 import bg.sofia.uni.fmi.mjt.newsfeed.exception.*;
+import bg.sofia.uni.fmi.mjt.newsfeed.parseresult.ApiResponse;
 import bg.sofia.uni.fmi.mjt.newsfeed.parseresult.ErrorResponse;
 import bg.sofia.uni.fmi.mjt.newsfeed.parseresult.OKResponse;
 import com.google.gson.Gson;
@@ -49,14 +50,13 @@ public class WebNewsApi {
      *
      * @return String representation of the GET query.
      */
-    public StringBuilder createQuery() throws IllegalPageSizeException {
+    public StringBuilder createQuery() throws IllegalPageSizeException, IllegalArgumentException {
         if (keywords == null || keywords.isBlank()) {
             throw new IllegalArgumentException("Keywords must not be null or empty");
         }
         if (pageSize < 1 || pageSize > 100) {
             throw new IllegalPageSizeException("Page size must be between 1 and 100");
         }
-
         StringBuilder query = new StringBuilder(BASE_URL)
                 .append("?q=").append(keywords.replace(" ", "%20"))
                 .append("&pageSize=").append(pageSize)
@@ -82,6 +82,18 @@ public class WebNewsApi {
         return "GET " + createQuery() + " HTTP/1.1\r\n" +
                 "Host: " + HOST + "\r\n" +
                 "Connection: close\r\n\r\n";
+    }
+
+    public ApiResponse handleResponse(StringBuilder response) throws ApiResponseException {
+        Gson gson = new Gson();
+        if (response.toString().contains("status") && response.toString().contains("code")) {
+            Type type = new TypeToken<ErrorResponse>() {}.getType();
+            ErrorResponse result = gson.fromJson(response.toString(), type);
+            handleErrorResponse(result);
+        }
+
+        Type type = new TypeToken<OKResponse>() {}.getType();
+        return gson.<OKResponse>fromJson(response.toString(), type);
     }
 
     public void handleErrorResponse(ErrorResponse response) throws ApiResponseException {
@@ -117,7 +129,7 @@ public class WebNewsApi {
      * @return List of articles matching the criteria.
      * @throws ApiResponseException If an error occurs during the request.
      */
-    public List<Article> fetchArticles() throws ApiResponseException, IOException {
+    public List<Article> fetchArticles() throws ApiResponseException {
         try (Socket socket = new Socket(HOST, HTTP_PORT)) {
             PrintWriter writer = new PrintWriter(socket.getOutputStream(), true);
             BufferedReader reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
@@ -137,19 +149,7 @@ public class WebNewsApi {
                 }
             }
 
-            Gson gson = new Gson();
-
-            if (response.toString().contains("status") && response.toString().contains("code")) {
-                Type type = new TypeToken<ErrorResponse>() {}.getType();
-                ErrorResponse result = gson.fromJson(response.toString(), type);
-                handleErrorResponse(result);
-                return null;
-            }
-
-            Type type = new TypeToken<OKResponse>() {}.getType();
-            OKResponse result = gson.fromJson(response.toString(), type);
-
-            return result.articles();
+            return ((OKResponse) handleResponse(response)).articles();
         } catch (IOException e) {
             throw new RuntimeException("Could not access the website", e);
         }

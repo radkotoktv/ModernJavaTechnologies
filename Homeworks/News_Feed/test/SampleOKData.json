@@ -1,0 +1,32 @@
+{
+  "status": "ok",
+  "totalResults": 2,
+  "articles": [
+    {
+      "source": {
+        "id": "id1",
+        "name": "name1"
+      },
+      "author": "author1",
+      "title": "title1",
+      "description": "description1",
+      "url": "url1",
+      "urlToImage": "urlToImage1",
+      "publishedAt": "2025-01-19T23:32:00Z",
+      "content": "content1"
+    },
+    {
+      "source": {
+        "id": "id2",
+        "name": "name2"
+      },
+        "author": "author2",
+        "title": "title2",
+        "description": "description2",
+        "url": "url2",
+        "urlToImage": "urlToImage2",
+        "publishedAt": "2025-01-19T23:32:00Z",
+        "content": "content2"
+    }
+  ]
+}

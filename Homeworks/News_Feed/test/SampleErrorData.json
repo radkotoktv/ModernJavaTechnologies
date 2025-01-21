@@ -1,0 +1,5 @@
+{
+  "status": "error",
+  "code": "apiKeyMissing",
+  "message": "Example error message"
+}
