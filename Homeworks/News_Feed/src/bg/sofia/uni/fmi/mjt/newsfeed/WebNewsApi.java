@@ -24,6 +24,7 @@ import java.lang.reflect.Type;
 import java.net.Socket;
 
 import java.util.List;
+import java.util.Objects;
 
 public class WebNewsApi {
     private static final String BASE_URL = "/v2/top-headlines";
@@ -105,6 +106,18 @@ public class WebNewsApi {
         Type type = new TypeToken<OKResponse>() {
         }.getType();
         return gson.<OKResponse>fromJson(response.toString(), type);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+        WebNewsApi that = (WebNewsApi) o;
+        return pageSize == that.pageSize && Objects.equals(keywords, that.keywords) && Objects.equals(country, that.country) && category == that.category;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(keywords, country, pageSize, category);
     }
 
     public void handleErrorResponse(ErrorResponse response) throws ApiResponseException {
