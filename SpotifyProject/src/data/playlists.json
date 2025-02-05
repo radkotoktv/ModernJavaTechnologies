@@ -1,0 +1,41 @@
+[
+  {
+    "name": "Summer Vibes",
+    "owner": "John Doe",
+    "duration": 777,
+    "numberOfSongs": 2,
+    "songs": [
+      {
+        "title": "Sign of the Times",
+        "artist": "Harry Styles",
+        "duration": 340,
+        "numberOfPlays": 0,
+        "fileName": "sign_of_the_times.wav"
+      },
+      {
+        "title": "Perfect",
+        "artist": "Ed Sheeran",
+        "duration": 263,
+        "numberOfPlays": 0,
+        "fileName": "perfect.wav"
+      }
+    ],
+    "amountOfPlays": 0
+  },
+  {
+    "name": "Chill Vibes",
+    "owner": "Jane Doe",
+    "duration": 174,
+    "numberOfSongs": 1,
+    "songs": [
+      {
+        "title": "Watermelon Sugar",
+        "artist": "Harry Styles",
+        "duration": 174,
+        "numberOfPlays": 0,
+        "fileName": "watermelon_sugar.wav"
+      }
+    ],
+    "amountOfPlays": 2
+  }
+]

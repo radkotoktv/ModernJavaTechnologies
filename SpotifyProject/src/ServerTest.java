@@ -1,22 +1,101 @@
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+import playlist.Playlist;
+import song.Song;
+import user.User;
+
+import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.nio.ByteBuffer;
 import java.nio.channels.*;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Set;
 
-public class ServerTest {
-    private static final int PORT = 7777;
-    private static final int BUFFER_SIZE = 1024;
+import static constants.Constant.BUFFER_SIZE;
+import static constants.Constant.PORT;
 
-    public static void main(String[] args) throws IOException {
+public class ServerTest {
+    private static ArrayList<User> users;
+    private static ArrayList<Song> songs;
+    private static ArrayList<Playlist> playlists;
+    private static HashMap<User, ArrayList<Playlist>> data;
+
+    public static void main(String... args) throws IOException {
+        users = readUsersFromFile();
+        songs = readSongsFromFile();
+        playlists = readPlaylistsFromFile();
+        createServer();
+    }
+
+    public static ArrayList<Playlist> readPlaylistsFromFile() {
+        Gson gson = new Gson();
+        try (FileReader reader = new FileReader("src/data/playlists.json")) {
+            return gson.fromJson(reader, new TypeToken<ArrayList<Playlist>>() {}.getType());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public static ArrayList<Song> readSongsFromFile() {
+        Gson gson = new Gson();
+        try (FileReader reader = new FileReader("src/data/songs.json")) {
+            return gson.fromJson(reader, new TypeToken<ArrayList<Song>>() {}.getType());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public static ArrayList<User> readUsersFromFile() {
+        Gson gson = new Gson();
+        try (FileReader reader = new FileReader("src/data/users.json")) {
+            return gson.fromJson(reader, new TypeToken<ArrayList<User>>() {}.getType());
+        } catch (IOException e) {
+            e.printStackTrace();
+
+        }
+        return null;
+    }
+
+    public static void registerUser(User newUser) {
+        if (users.contains(newUser)) {
+            System.out.println("User already exists");
+            return;
+        }
+
+        users.add(newUser);
+        try (FileWriter fw = new FileWriter("src/data/users.json", true)) {
+            fw.write(newUser.username() + ";" + newUser.password() + ";" + newUser.email() + "\n");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void createServer() throws IOException {
         try (ServerSocketChannel serverSocket = ServerSocketChannel.open();
              Selector selector = Selector.open()) {
 
-            serverSocket.bind(new InetSocketAddress(PORT));
+            serverSocket.bind(new InetSocketAddress(Integer.parseInt(PORT.getValue())));
             serverSocket.configureBlocking(false);
             serverSocket.register(selector, SelectionKey.OP_ACCEPT);
-            System.out.println("Server started on port " + PORT);
+            System.out.println("Server started on port " + PORT.getValue());
+
+            for (User user : users) {
+                System.out.println("User: " + user.username() + ", " + user.password() + ", " + user.email());
+            }
+
+            for (Song song : songs) {
+                System.out.println("Song: " + song.title() + ", " + song.artist() + ", " + song.duration() + ", " + song.numberOfPlays() + ", " + song.fileName());
+            }
+
+            for (Playlist playlist: playlists) {
+                System.out.println("Playlist: " + playlist.name() + ", " + playlist.owner() + ", " + playlist.duration() + ", " + playlist.numberOfSongs() + ", " + playlist.songs() + ", " + playlist.amountOfPlayes());
+            }
 
             while (true) {
                 selector.select();
@@ -36,7 +115,7 @@ public class ServerTest {
                         }
                     } else if (key.isReadable()) {
                         SocketChannel clientChannel = (SocketChannel) key.channel();
-                        ByteBuffer buffer = ByteBuffer.allocate(BUFFER_SIZE);
+                        ByteBuffer buffer = ByteBuffer.allocate(Integer.parseInt(BUFFER_SIZE.getValue()));
                         try {
                             int bytesRead = clientChannel.read(buffer);
                             if (bytesRead == -1) {
