@@ -2,6 +2,7 @@ import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.nio.ByteBuffer;
 import java.nio.channels.SocketChannel;
+import java.util.Scanner;
 
 public class ClientTest {
     private static final String SERVER_HOST = "localhost";
@@ -9,16 +10,20 @@ public class ClientTest {
     private static final int BUFFER_SIZE = 1024;
 
     public static void main(String[] args) {
-        try (SocketChannel socketChannel = SocketChannel.open()) {
+        try (SocketChannel socketChannel = SocketChannel.open();
+             Scanner scanner = new Scanner(System.in)) {
             socketChannel.connect(new InetSocketAddress(SERVER_HOST, SERVER_PORT));
             System.out.println("Connected to the server.");
 
-            ByteBuffer buffer = ByteBuffer.allocate(BUFFER_SIZE);
-            buffer.put("1".getBytes());
-            buffer.flip();
-            socketChannel.write(buffer);
-
             while (true) {
+                System.out.print("Enter a number: ");
+                String userInput = scanner.nextLine();
+
+                ByteBuffer buffer = ByteBuffer.allocate(BUFFER_SIZE);
+                buffer.put(userInput.getBytes());
+                buffer.flip();
+                socketChannel.write(buffer);
+
                 buffer.clear();
                 int bytesRead = socketChannel.read(buffer);
 
@@ -26,16 +31,12 @@ public class ClientTest {
                     buffer.flip();
                     byte[] responseData = new byte[buffer.remaining()];
                     buffer.get(responseData);
-                    int response = Integer.parseInt(new String(responseData)) + 5;
-                    System.out.println("Client said: " + response);
-                    buffer.clear();
-                    buffer.put(String.valueOf(response).getBytes());
-                    buffer.flip();
-                    socketChannel.write(buffer);
+                    String response = new String(responseData).trim();
+                    System.out.println("Received from server: " + response);
                 }
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            System.out.println("Disconnected from server.");
         }
     }
 }
