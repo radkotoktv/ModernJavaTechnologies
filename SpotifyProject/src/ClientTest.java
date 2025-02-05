@@ -8,34 +8,34 @@ public class ClientTest {
     private static final int SERVER_PORT = 7777;
     private static final int BUFFER_SIZE = 1024;
 
-    public static void createClient() {
-        try {
-            InetSocketAddress serverAddress = new InetSocketAddress(SERVER_HOST, SERVER_PORT);
-            SocketChannel socketChannel = SocketChannel.open(serverAddress);
+    public static void main(String[] args) {
+        try (SocketChannel socketChannel = SocketChannel.open()) {
+            socketChannel.connect(new InetSocketAddress(SERVER_HOST, SERVER_PORT));
+            System.out.println("Connected to the server.");
 
             ByteBuffer buffer = ByteBuffer.allocate(BUFFER_SIZE);
-            String message = "Hello, Server!";
-            buffer.put(message.getBytes());
+            buffer.put("1".getBytes());
             buffer.flip();
             socketChannel.write(buffer);
 
-            buffer.clear();
-            int bytesRead = socketChannel.read(buffer);
-            if (bytesRead > 0) {
-                buffer.flip();
-                byte[] responseBytes = new byte[buffer.remaining()];
-                buffer.get(responseBytes);
-                String response = new String(responseBytes);
-                System.out.println("Received from server: " + response);
-            }
+            while (true) {
+                buffer.clear();
+                int bytesRead = socketChannel.read(buffer);
 
-            socketChannel.close();
+                if (bytesRead > 0) {
+                    buffer.flip();
+                    byte[] responseData = new byte[buffer.remaining()];
+                    buffer.get(responseData);
+                    int response = Integer.parseInt(new String(responseData)) + 5;
+                    System.out.println("Client said: " + response);
+                    buffer.clear();
+                    buffer.put(String.valueOf(response).getBytes());
+                    buffer.flip();
+                    socketChannel.write(buffer);
+                }
+            }
         } catch (IOException e) {
             e.printStackTrace();
         }
-    }
-
-    public static void main(String[] args) {
-        createClient();
     }
 }

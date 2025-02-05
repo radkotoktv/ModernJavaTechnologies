@@ -1,71 +1,58 @@
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.nio.ByteBuffer;
-import java.nio.channels.SelectionKey;
-import java.nio.channels.Selector;
-import java.nio.channels.ServerSocketChannel;
-import java.nio.channels.SocketChannel;
+import java.nio.channels.*;
 import java.util.Iterator;
 import java.util.Set;
 
 public class ServerTest {
-    private static final String SERVER_HOST = "localhost";
-    private static final int SERVER_PORT = 7777;
+    private static final int PORT = 7777;
     private static final int BUFFER_SIZE = 1024;
+    private static final int INTERVAL = 10000;
 
-    public static void createServer() throws IOException {
-        ServerSocketChannel serverSocketChannel = ServerSocketChannel.open();
-        serverSocketChannel.bind(new InetSocketAddress(SERVER_HOST, SERVER_PORT));
-        serverSocketChannel.configureBlocking(false);
+    public static void main(String[] args) throws IOException {
+        try (ServerSocketChannel serverSocket = ServerSocketChannel.open();
+             Selector selector = Selector.open()) {
 
-        ByteBuffer buffer = ByteBuffer.allocate(BUFFER_SIZE);
-        while (true) {
-            SocketChannel socketChannel = serverSocketChannel.accept();
+            serverSocket.bind(new InetSocketAddress(PORT));
+            serverSocket.configureBlocking(false);
+            serverSocket.register(selector, SelectionKey.OP_ACCEPT);
+            System.out.println("Time server started on port " + PORT);
 
-            Selector selector = Selector.open();
-            socketChannel.configureBlocking(false);
-            socketChannel.register(selector, SelectionKey.OP_READ | SelectionKey.OP_WRITE);
+            while (true) {
+                selector.select(INTERVAL);
+                Set<SelectionKey> selectedKeys = selector.selectedKeys();
+                Iterator<SelectionKey> keyIterator = selectedKeys.iterator();
 
-            int readyChannels = selector.select();
-            if (readyChannels == 0) {
-                continue;
-            }
+                while (keyIterator.hasNext()) {
+                    SelectionKey key = keyIterator.next();
+                    keyIterator.remove();
 
-            Set<SelectionKey> selectedKeys = selector.selectedKeys();
-            Iterator<SelectionKey> keyIterator = selectedKeys.iterator();
-            while (keyIterator.hasNext()) {
-                SelectionKey key = keyIterator.next();
-                if (key.isReadable()) {
-                    // A channel is ready for reading
-                    SocketChannel sc = (SocketChannel) key.channel();
-                    while (true) {
-                        buffer.clear();
-                        int r = sc.read(buffer);
-                        if (r <= 0) {
-                            continue;
+                    if (key.isAcceptable()) {
+                        SocketChannel clientChannel = serverSocket.accept();
+                        if (clientChannel != null) {
+                            clientChannel.configureBlocking(false);
+                            clientChannel.register(selector, SelectionKey.OP_READ);
+                            System.out.println("Accepted connection from " + clientChannel.getRemoteAddress());
                         }
-                        buffer.flip();
-                        sc.write(buffer);
-                    }
-                } else if (key.isWritable()) {
-                    SocketChannel socketChannel2 = SocketChannel.open();
-                    socketChannel2.connect(new InetSocketAddress(SERVER_HOST, SERVER_PORT));
-
-                    String newData = "Current time: " + System.currentTimeMillis();
-                    ByteBuffer buf = ByteBuffer.allocate(48);
-
-                    buf.put(newData.getBytes());
-                    buf.flip();
-                    while (buf.hasRemaining()) {
-                        socketChannel2.write(buf);
+                    } else if (key.isReadable()) {
+                        SocketChannel clientChannel = (SocketChannel) key.channel();
+                        ByteBuffer buffer = ByteBuffer.allocate(BUFFER_SIZE);
+                        int bytesRead = clientChannel.read(buffer);
+                        if (bytesRead > 0) {
+                            buffer.flip();
+                            byte[] requestData = new byte[buffer.remaining()];
+                            buffer.get(requestData);
+                            int response = Integer.parseInt(new String(requestData)) + 1;
+                            System.out.println("Server said: " + response);
+                            buffer.clear();
+                            buffer.put(String.valueOf(response).getBytes());
+                            buffer.flip();
+                            clientChannel.write(buffer);
+                        }
                     }
                 }
-                keyIterator.remove();
             }
         }
-    }
-
-    public static void main(String... args) throws IOException {
-        createServer();
     }
 }
