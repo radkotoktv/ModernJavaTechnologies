@@ -1,9 +1,10 @@
 package playlist;
 
-import file.writer.PlaylistWriter;
 import song.Song;
 
 import java.util.ArrayList;
+
+import static constants.Constant.PLAYLIST_WRITER;
 
 public record Playlist(String name,
                        String owner,
@@ -17,7 +18,6 @@ public record Playlist(String name,
             return;
         }
         songs.add(newSong);
-        PlaylistWriter playlistWriter = new PlaylistWriter();
-        playlistWriter.writeToFile(this);
+        PLAYLIST_WRITER.writeToFile(this);
     }
 }
