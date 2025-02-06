@@ -1,10 +1,10 @@
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
+import file.reader.PlaylistReader;
+import file.reader.SongReader;
+import file.reader.UsersReader;
 import playlist.Playlist;
 import song.Song;
 import user.User;
 
-import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.net.InetSocketAddress;
@@ -24,42 +24,15 @@ public class ServerTest {
     private static ArrayList<Playlist> playlists;
     private static HashMap<User, ArrayList<Playlist>> data;
 
+    private static final UsersReader USERS_READER = new UsersReader();
+    private static final SongReader SONGS_READER = new SongReader();
+    private static final PlaylistReader PLAYLIST_READER = new PlaylistReader();
+
     public static void main(String... args) throws IOException {
-        users = readUsersFromFile();
-        songs = readSongsFromFile();
-        playlists = readPlaylistsFromFile();
+        users = USERS_READER.readFromFile();
+        songs = SONGS_READER.readFromFile();
+        playlists = PLAYLIST_READER.readFromFile();
         createServer();
-    }
-
-    public static ArrayList<Playlist> readPlaylistsFromFile() {
-        Gson gson = new Gson();
-        try (FileReader reader = new FileReader("src/data/playlists.json")) {
-            return gson.fromJson(reader, new TypeToken<ArrayList<Playlist>>() {}.getType());
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
-
-    public static ArrayList<Song> readSongsFromFile() {
-        Gson gson = new Gson();
-        try (FileReader reader = new FileReader("src/data/songs.json")) {
-            return gson.fromJson(reader, new TypeToken<ArrayList<Song>>() {}.getType());
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
-
-    public static ArrayList<User> readUsersFromFile() {
-        Gson gson = new Gson();
-        try (FileReader reader = new FileReader("src/data/users.json")) {
-            return gson.fromJson(reader, new TypeToken<ArrayList<User>>() {}.getType());
-        } catch (IOException e) {
-            e.printStackTrace();
-
-        }
-        return null;
     }
 
     public static void registerUser(User newUser) {
