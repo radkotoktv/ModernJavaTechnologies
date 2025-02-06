@@ -1,3 +1,5 @@
+package server;
+
 import playlist.Playlist;
 import song.Song;
 import user.User;
@@ -13,7 +15,6 @@ import java.nio.channels.Selector;
 import java.nio.channels.SelectionKey;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Set;
 import java.util.Iterator;
 
@@ -30,7 +31,7 @@ public class Server {
     private static ArrayList<User> users;
     private static ArrayList<Song> songs;
     private static ArrayList<Playlist> playlists;
-    private static HashMap<User, ArrayList<Playlist>> data;
+//    private static HashMap<User, ArrayList<Playlist>> data;
 
     public static void main(String... args) throws IOException {
         users = USERS_READER.readFromFile();
@@ -39,13 +40,17 @@ public class Server {
         createServer();
     }
 
-    public static void registerUser(User newUser) {
+    public static String registerUser(User newUser) {
         if (users.contains(newUser)) {
-            System.out.println("User already exists");
-            return;
+            return "User already exists!";
         }
         users.add(newUser);
         USER_WRITER.writeToFile(newUser);
+        return "You have been registered to the system!";
+    }
+
+    public static String login(String password, String email) {
+        return null;
     }
 
     public static void addSong(Song newSong) {
@@ -57,19 +62,19 @@ public class Server {
         SONG_WRITER.writeToFile(newSong);
     }
 
-    public static void addPlaylist(Playlist newPlaylist) {
+    public static String addPlaylist(Playlist newPlaylist) {
         if (playlists.contains(newPlaylist)) {
-            System.out.println("Playlist already exists");
-            return;
+            return "Playlist already exists!";
         }
         playlists.add(newPlaylist);
         PLAYLIST_WRITER.writeToFile(newPlaylist);
+        return "Playlist successfully created!";
     }
 
     public static String handleCommand(String[] receivedData) {
         return switch (receivedData[0]) {
-            case "register" -> "You have selected the register option!";
-            case "login" -> "You have selected the login option!";
+            case "register" -> registerUser(new User(receivedData[1], receivedData[2]));
+            case "login" -> login(receivedData[1], receivedData[2]);
             case "disconnect" -> "You have selected the disconnect option!";
             case "search" -> "You have selected the search option!";
             case "top" -> "You have selected the top option!";
@@ -89,7 +94,7 @@ public class Server {
             serverSocket.bind(new InetSocketAddress(Integer.parseInt(PORT.getValue())));
             serverSocket.configureBlocking(false);
             serverSocket.register(selector, SelectionKey.OP_ACCEPT);
-            System.out.println("Server started on port " + PORT.getValue());
+            System.out.println("server.Server started on port " + PORT.getValue());
 
             while (true) {
                 selector.select();

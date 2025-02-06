@@ -1,3 +1,3 @@
 package user;
 
-public record User(String username, String password, String email) { }
+public record User(String password, String email) { }

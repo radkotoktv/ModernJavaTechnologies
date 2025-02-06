@@ -11,7 +11,7 @@ public record Playlist(String name,
                        int duration,
                        int numberOfSongs,
                        ArrayList<Song> songs,
-                       int amountOfPlayes) {
+                       int amountOfPlays) {
     public void addSong(Song newSong) {
         if (songs.contains(newSong)) {
             System.out.println("Song is already in the playlist");
