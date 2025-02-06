@@ -1,19 +1,18 @@
 import file.reader.PlaylistReader;
 import file.reader.SongReader;
 import file.reader.UsersReader;
+import file.writer.PlaylistWriter;
+import file.writer.SongWriter;
+import file.writer.UserWriter;
 import playlist.Playlist;
 import song.Song;
 import user.User;
 
-import java.io.FileWriter;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.nio.ByteBuffer;
 import java.nio.channels.*;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Set;
+import java.util.*;
 
 import static constants.Constant.BUFFER_SIZE;
 import static constants.Constant.PORT;
@@ -27,6 +26,9 @@ public class ServerTest {
     private static final UsersReader USERS_READER = new UsersReader();
     private static final SongReader SONGS_READER = new SongReader();
     private static final PlaylistReader PLAYLIST_READER = new PlaylistReader();
+    private static final UserWriter USER_WRITER = new UserWriter();
+    private static final SongWriter SONG_WRITER = new SongWriter();
+    private static final PlaylistWriter PLAYLIST_WRITER = new PlaylistWriter();
 
     public static void main(String... args) throws IOException {
         users = USERS_READER.readFromFile();
@@ -40,13 +42,26 @@ public class ServerTest {
             System.out.println("User already exists");
             return;
         }
-
         users.add(newUser);
-        try (FileWriter fw = new FileWriter("src/data/users.json", true)) {
-            fw.write(newUser.username() + ";" + newUser.password() + ";" + newUser.email() + "\n");
-        } catch (IOException e) {
-            e.printStackTrace();
+        USER_WRITER.writeToFile(newUser);
+    }
+
+    public static void addSong(Song newSong) {
+        if (songs.contains(newSong)) {
+            System.out.println("Song already exists");
+            return;
         }
+        songs.add(newSong);
+        SONG_WRITER.writeToFile(newSong);
+    }
+
+    public static void addPlaylist(Playlist newPlaylist) {
+        if (playlists.contains(newPlaylist)) {
+            System.out.println("Playlist already exists");
+            return;
+        }
+        playlists.add(newPlaylist);
+        PLAYLIST_WRITER.writeToFile(newPlaylist);
     }
 
     public static void createServer() throws IOException {
