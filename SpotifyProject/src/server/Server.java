@@ -22,7 +22,6 @@ import static constants.Constant.USERS_READER;
 import static constants.Constant.SONGS_READER;
 import static constants.Constant.PLAYLIST_READER;
 import static constants.Constant.USER_WRITER;
-import static constants.Constant.SONG_WRITER;
 import static constants.Constant.PLAYLIST_WRITER;
 import static constants.Constant.PORT;
 import static constants.Constant.BUFFER_SIZE;
@@ -38,7 +37,6 @@ public class Server {
     private static ArrayList<User> users;
     private static ArrayList<Song> songs;
     private static ArrayList<Playlist> playlists;
-//    private static HashMap<User, ArrayList<Playlist>> data;
 
     public static void main(String... args) throws IOException {
         users = USERS_READER.readFromFile();
@@ -118,13 +116,22 @@ public class Server {
         return returnString + "}";
     }
 
+    public static String handleTop(int numberOfSongs) {
+        StringBuilder returnString = new StringBuilder("Top " + numberOfSongs + " songs:\n");
+        songs.stream()
+                .sorted((s1, s2) -> s2.numberOfPlays() - s1.numberOfPlays())
+                .limit(numberOfSongs)
+                .forEach(s -> returnString.append(s.title()).append(" ").append(s.artist()).append(" ").append(s.numberOfPlays()).append("\n"));
+        return returnString.toString();
+    }
+
     public static String handleCommand(String[] receivedData) {
         return switch (receivedData[0]) {
             case "register" -> registerUser(new User(receivedData[1], receivedData[2]));
             case "login" -> login(receivedData[1], receivedData[2]);
             case "disconnect" -> "You have selected the disconnect option!";
             case "search" -> "You have selected the search option!";
-            case "top" -> "You have selected the top option!";
+            case "top" -> handleTop(Integer.parseInt(receivedData[1]));
             case "create-playlist" -> addPlaylist(new Playlist(receivedData[1], receivedData[2],0, 0, new ArrayList<>(), 0));
             case "add-song-to" -> handleSongAddition(receivedData[1], receivedData[2], receivedData[3]);
             case "show-playlist" -> showPlaylist(receivedData[1]);
