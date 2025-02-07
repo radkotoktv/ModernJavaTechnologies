@@ -26,6 +26,13 @@ import static constants.Constant.SONG_WRITER;
 import static constants.Constant.PLAYLIST_WRITER;
 import static constants.Constant.PORT;
 import static constants.Constant.BUFFER_SIZE;
+import static constants.Constant.SUCCESSFUL_REGISTRATION;
+import static constants.Constant.SUCCESSFUL_LOGIN;
+import static constants.Constant.SUCCESSFUL_PLAYLIST_CREATION;
+import static constants.Constant.SUCCESSFUL_SONG_ADDITION;
+import static constants.Constant.PRINT_USER;
+import static constants.Constant.SUCCESSFUL_LOGOUT;
+import static constants.Constant.UNSUCCESSFUL_PLAYLIST_SHOW;
 
 public class Server {
     private static ArrayList<User> users;
@@ -46,20 +53,15 @@ public class Server {
         }
         users.add(newUser);
         USER_WRITER.writeToFile(newUser);
-        return "You have been registered to the system!";
+        return SUCCESSFUL_REGISTRATION;
     }
 
     public static String login(String password, String email) {
-        return null;
-    }
-
-    public static void addSong(Song newSong) {
-        if (songs.contains(newSong)) {
-            System.out.println("Song already exists");
-            return;
+        User toLogin = new User(password, email);
+        if (!users.contains(toLogin)) {
+            return "User not found!";
         }
-        songs.add(newSong);
-        SONG_WRITER.writeToFile(newSong);
+        return SUCCESSFUL_LOGIN;
     }
 
     public static String addPlaylist(Playlist newPlaylist) {
@@ -68,7 +70,52 @@ public class Server {
         }
         playlists.add(newPlaylist);
         PLAYLIST_WRITER.writeToFile(newPlaylist);
-        return "Playlist successfully created!";
+
+        return SUCCESSFUL_PLAYLIST_CREATION;
+    }
+
+    public static String handleSongAddition(String playlistName, String songName, String ownerEmail) {
+        Playlist playlist = playlists.stream()
+                .filter(p -> p.name().equals(playlistName))
+                .findFirst()
+                .orElse(null);
+        if (playlist == null) {
+            return "Playlist not found!";
+        }
+
+        if (!playlist.owner().equals(ownerEmail)) {
+            return "You are not the owner of this playlist!";
+        }
+        Song song = songs.stream()
+                .filter(s -> s.title().equals(songName)).
+                findFirst()
+                .orElse(null);
+        if (song == null) {
+            return "Song not found!";
+        }
+
+        if (playlist.songs().contains(song)) {
+            return "Song is already in the playlist!";
+        }
+
+        playlist.addSong(song);
+        return SUCCESSFUL_SONG_ADDITION;
+    }
+
+    public static String showPlaylist(String playlistName) {
+        Playlist playlist = playlists.stream()
+                .filter(p -> p.name().equals(playlistName))
+                .findFirst()
+                .orElse(null);
+        if (playlist == null) {
+            return UNSUCCESSFUL_PLAYLIST_SHOW;
+        }
+
+        StringBuilder returnString = new StringBuilder(playlist.name() + " " + playlist.owner() + " " + playlist.duration() + " " + playlist.numberOfSongs() + " Songs: {");
+        for (Song song : playlist.songs()) {
+            returnString.append(song.title()).append(" ").append(song.artist()).append(" ");
+        }
+        return returnString + "}";
     }
 
     public static String handleCommand(String[] receivedData) {
@@ -78,11 +125,13 @@ public class Server {
             case "disconnect" -> "You have selected the disconnect option!";
             case "search" -> "You have selected the search option!";
             case "top" -> "You have selected the top option!";
-            case "create-playlist" -> "You have selected the create-playlist option!";
-            case "add-song-to" -> "You have selected the add-song-to option!";
-            case "show-playlist" -> "You have selected the show-playlist option!";
+            case "create-playlist" -> addPlaylist(new Playlist(receivedData[1], receivedData[2],0, 0, new ArrayList<>(), 0));
+            case "add-song-to" -> handleSongAddition(receivedData[1], receivedData[2], receivedData[3]);
+            case "show-playlist" -> showPlaylist(receivedData[1]);
             case "play" -> "You have selected the play option!";
             case "stop" -> "You have selected the stop option!";
+            case "user" -> PRINT_USER;
+            case "logout" -> SUCCESSFUL_LOGOUT;
             default -> "Invalid command!";
         };
     }
@@ -118,7 +167,7 @@ public class Server {
                         try {
                             int bytesRead = clientChannel.read(buffer);
                             if (bytesRead == -1) {
-                                System.out.println("Client disconnected: " + clientChannel.getRemoteAddress());
+                                System.out.println("client.Client disconnected: " + clientChannel.getRemoteAddress());
                                 clientChannel.close();
                                 key.cancel();
                                 continue;

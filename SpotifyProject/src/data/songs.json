@@ -1,21 +1,21 @@
 [
   {
-    "title": "Sign of the Times",
-    "artist": "Harry Styles",
+    "title": "Sign-of-the-Times",
+    "artist": "Harry-Styles",
     "duration": 340,
     "numberOfPlays": 0,
     "fileName": "sign_of_the_times.wav"
   },
   {
-    "title": "Watermelon Sugar",
-    "artist": "Harry Styles",
+    "title": "Watermelon-Sugar",
+    "artist": "Harry-Styles",
     "duration": 174,
     "numberOfPlays": 0,
     "fileName": "watermelon_sugar.wav"
   },
   {
     "title": "Perfect",
-    "artist": "Ed Sheeran",
+    "artist": "Ed-Sheeran",
     "duration": 263,
     "numberOfPlays": 0,
     "fileName": "perfect.wav"
