@@ -116,11 +116,30 @@ public class Server {
         return returnString + "}";
     }
 
-    public static String handleTop(int numberOfSongs) {
+    public static String top(int numberOfSongs) {
         StringBuilder returnString = new StringBuilder("Top " + numberOfSongs + " songs:\n");
         songs.stream()
                 .sorted((s1, s2) -> s2.numberOfPlays() - s1.numberOfPlays())
                 .limit(numberOfSongs)
+                .forEach(s -> returnString.append(s.title()).append(" ").append(s.artist()).append(" ").append(s.numberOfPlays()).append("\n"));
+        return returnString.toString();
+    }
+
+    public static String search(String... words) {
+        StringBuilder returnString = new StringBuilder("Songs containing ");
+        for (String word : words) {
+            returnString.append(word).append(" ");
+        }
+        returnString.append(":\n");
+        songs.stream()
+                .filter(s -> {
+                    for (String word : words) {
+                        if (!s.title().contains(word) && !s.artist().contains(word)) {
+                            return false;
+                        }
+                    }
+                    return true;
+                })
                 .forEach(s -> returnString.append(s.title()).append(" ").append(s.artist()).append(" ").append(s.numberOfPlays()).append("\n"));
         return returnString.toString();
     }
@@ -130,8 +149,8 @@ public class Server {
             case "register" -> registerUser(new User(receivedData[1], receivedData[2]));
             case "login" -> login(receivedData[1], receivedData[2]);
             case "disconnect" -> "You have selected the disconnect option!";
-            case "search" -> "You have selected the search option!";
-            case "top" -> handleTop(Integer.parseInt(receivedData[1]));
+            case "search" -> search();
+            case "top" -> top(Integer.parseInt(receivedData[1]));
             case "create-playlist" -> addPlaylist(new Playlist(receivedData[1], receivedData[2],0, 0, new ArrayList<>(), 0));
             case "add-song-to" -> handleSongAddition(receivedData[1], receivedData[2], receivedData[3]);
             case "show-playlist" -> showPlaylist(receivedData[1]);

@@ -57,6 +57,10 @@ public class ClientLogic {
                     System.out.println(response);
                 }
             }
+            case "search": {
+                System.out.println(response);
+                break;
+            }
         }
     }
 
