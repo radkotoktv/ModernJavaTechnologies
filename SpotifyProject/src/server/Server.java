@@ -17,6 +17,9 @@ import java.nio.channels.SelectionKey;
 import java.util.ArrayList;
 import java.util.Set;
 import java.util.Iterator;
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import static constants.Constant.USERS_READER;
 import static constants.Constant.SONGS_READER;
@@ -121,16 +124,12 @@ public class Server {
         return returnString.toString();
     }
 
-    public static String[] parseInput(String[] words) {
-        String[] parsedWords = new String[words.length - 1];
-        int index = 0;
-        for (int i = 1; i < words.length; i++) {
-            parsedWords[index] = words[i];
-        }
-        return parsedWords;
+    public static List<String> parseInput(String[] words) {
+        return java.util.Arrays.stream(words, 1, words.length - 1)
+                .collect(Collectors.toList());
     }
 
-    public static String search(String... words) {
+    public static String search(List<String> words) {
         StringBuilder returnString = new StringBuilder("Songs containing ");
         for (String word : words) {
             returnString.append(word).append(" ");
@@ -145,7 +144,7 @@ public class Server {
                     }
                     return true;
                 })
-                .forEach(s -> returnString.append(s.title()).append(" ").append(s.artist()).append(" ").append(s.numberOfPlays()).append("\n"));
+                .forEach(s -> returnString.append(s.toString()).append("\n"));
         return returnString.toString();
     }
 
