@@ -20,7 +20,7 @@ public class ClientLogic {
     public boolean validateCommand(String[] command) {
         return switch(command[0]) {
             case "register", "login" -> command.length == 3;
-            case "disconnect", "stop", "user", "logout", "show-songs" -> command.length == 1 && currentUser != null;
+            case "disconnect", "stop", "user", "logout", "show-songs", "help" -> command.length == 1 && currentUser != null;
             case "play", "show-playlist", "create-playlist", "top" -> command.length == 2 && currentUser != null;
             case "add-song-to" -> command.length == 3 && currentUser != null;
             case "search" -> command.length > 1 && currentUser != null;
@@ -59,7 +59,7 @@ public class ClientLogic {
                 }
                 break;
             }
-            case "search": {
+            default : {
                 System.out.println(response);
                 break;
             }

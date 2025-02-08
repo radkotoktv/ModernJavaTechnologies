@@ -19,7 +19,6 @@ import java.util.Set;
 import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 
 import static constants.Constant.USERS_READER;
 import static constants.Constant.SONGS_READER;
@@ -35,6 +34,7 @@ import static constants.Constant.SUCCESSFUL_SONG_ADDITION;
 import static constants.Constant.PRINT_USER;
 import static constants.Constant.SUCCESSFUL_LOGOUT;
 import static constants.Constant.UNSUCCESSFUL_PLAYLIST_SHOW;
+import static constants.Constant.HELP_TEXT;
 
 public class Server {
     private static ArrayList<User> users;
@@ -120,7 +120,7 @@ public class Server {
         songs.stream()
                 .sorted((s1, s2) -> s2.numberOfPlays() - s1.numberOfPlays())
                 .limit(numberOfSongs)
-                .forEach(s -> returnString.append(s.toString()).append("\n"));
+                .forEach(s -> returnString.append(s).append("\n"));
         return returnString.toString();
     }
 
@@ -163,6 +163,7 @@ public class Server {
             case "stop" -> "You have selected the stop option!";
             case "user" -> PRINT_USER;
             case "logout" -> SUCCESSFUL_LOGOUT;
+            case "help" -> HELP_TEXT;
             default -> "Invalid command!";
         };
     }
