@@ -1,0 +1,58 @@
+package player;
+
+import javax.sound.sampled.AudioInputStream;
+import javax.sound.sampled.AudioFormat;
+import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.DataLine;
+import javax.sound.sampled.LineUnavailableException;
+import javax.sound.sampled.SourceDataLine;
+import javax.sound.sampled.UnsupportedAudioFileException;
+
+import java.io.File;
+import java.io.IOException;
+
+import static constants.Constant.WAV_BUFFER_SIZE;
+
+public class WavPlayer implements Runnable {
+    private final String fileName;
+
+    public WavPlayer(String fileName) {
+        this.fileName = fileName;
+    }
+
+    public void playWavFile(String filePath) {
+        filePath = "src/data/songs/" + filePath;
+        File audioFile = new File(filePath);
+
+        try (AudioInputStream audioStream = AudioSystem.getAudioInputStream(audioFile)) {
+            AudioFormat format = audioStream.getFormat();
+            DataLine.Info info = new DataLine.Info(SourceDataLine.class, format);
+
+            try (SourceDataLine audioLine = (SourceDataLine) AudioSystem.getLine(info)) {
+                audioLine.open(format);
+                audioLine.start();
+                byte[] buffer = new byte[WAV_BUFFER_SIZE];
+                int bytesRead;
+                try {
+                    while ((bytesRead = audioStream.read(buffer)) != -1) {
+                        if (Thread.currentThread().isInterrupted()) {
+                            throw new InterruptedException();
+                        }
+                        audioLine.write(buffer, 0, bytesRead);
+                    }
+                } catch (InterruptedException e) {
+                    System.out.println("Playback was interrupted!");
+                }
+
+                audioLine.drain();
+            }
+        } catch (UnsupportedAudioFileException | IOException | LineUnavailableException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void run() {
+        playWavFile(fileName);
+    }
+}

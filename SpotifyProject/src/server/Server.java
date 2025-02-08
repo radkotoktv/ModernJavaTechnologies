@@ -35,6 +35,11 @@ import static constants.Constant.PRINT_USER;
 import static constants.Constant.SUCCESSFUL_LOGOUT;
 import static constants.Constant.UNSUCCESSFUL_PLAYLIST_SHOW;
 import static constants.Constant.HELP_TEXT;
+import static constants.Constant.STOP_SONG;
+import static constants.Constant.SONG_NOT_FOUND;
+import static constants.Constant.ONE;
+import static constants.Constant.TWO;
+import static constants.Constant.THREE;
 
 public class Server {
     private static ArrayList<User> users;
@@ -88,8 +93,8 @@ public class Server {
             return "You are not the owner of this playlist!";
         }
         Song song = songs.stream()
-                .filter(s -> s.title().equals(songName)).
-                findFirst()
+                .filter(s -> s.title().equals(songName))
+                .findFirst()
                 .orElse(null);
         if (song == null) {
             return "Song not found!";
@@ -125,7 +130,7 @@ public class Server {
     }
 
     public static List<String> parseInput(String[] words) {
-        return java.util.Arrays.stream(words, 1, words.length - 1)
+        return java.util.Arrays.stream(words, ONE, words.length - 1)
                 .collect(Collectors.toList());
     }
 
@@ -148,19 +153,42 @@ public class Server {
         return returnString.toString();
     }
 
+    public static String play(String songName) {
+        if (songName == null) {
+            return SONG_NOT_FOUND;
+        }
+
+        Song song = songs.stream()
+                .filter(s -> s.title().equals(songName))
+                .findFirst()
+                .orElse(null);
+
+        if (song == null) {
+            return SONG_NOT_FOUND;
+        }
+
+        song.setNumberOfPlays(song.numberOfPlays() + 1);
+        return song.fileName();
+    }
+
     public static String handleCommand(String[] receivedData) {
         return switch (receivedData[0]) {
-            case "register" -> registerUser(new User(receivedData[1], receivedData[2]));
-            case "login" -> login(receivedData[1], receivedData[2]);
+            case "register" -> registerUser(new User(receivedData[ONE], receivedData[TWO]));
+            case "login" -> login(receivedData[ONE], receivedData[TWO]);
             case "disconnect" -> "You have selected the disconnect option!";
             case "search" -> search(parseInput(receivedData));
-            case "top" -> top(Integer.parseInt(receivedData[1]));
-            case "create-playlist" -> addPlaylist(new Playlist(receivedData[1], receivedData[2],0, 0, new ArrayList<>(), 0));
-            case "add-song-to" -> handleSongAddition(receivedData[1], receivedData[2], receivedData[3]);
-            case "show-playlist" -> showPlaylist(receivedData[1]);
+            case "top" -> top(Integer.parseInt(receivedData[ONE]));
+            case "create-playlist" -> addPlaylist(new Playlist(receivedData[ONE],
+                    receivedData[TWO],
+                    0,
+                    0,
+                    new ArrayList<>(),
+                    0));
+            case "add-song-to" -> handleSongAddition(receivedData[ONE], receivedData[TWO], receivedData[THREE]);
+            case "show-playlist" -> showPlaylist(receivedData[ONE]);
             case "show-songs" -> songs.toString();
-            case "play" -> "You have selected the play option!";
-            case "stop" -> "You have selected the stop option!";
+            case "play" -> play(receivedData[ONE]);
+            case "stop" -> STOP_SONG;
             case "user" -> PRINT_USER;
             case "logout" -> SUCCESSFUL_LOGOUT;
             case "help" -> HELP_TEXT;
@@ -169,14 +197,8 @@ public class Server {
     }
 
     public static void createServer() throws IOException {
-        try (ServerSocketChannel serverSocket = ServerSocketChannel.open();
-             Selector selector = Selector.open()) {
-
-            serverSocket.bind(new InetSocketAddress(Integer.parseInt(PORT.getValue())));
-            serverSocket.configureBlocking(false);
-            serverSocket.register(selector, SelectionKey.OP_ACCEPT);
-            System.out.println("server.Server started on port " + PORT.getValue());
-
+        try (ServerSocketChannel serverSocket = ServerSocketChannel.open(); Selector selector = Selector.open()) {
+            configureServerSocket(serverSocket, selector);
             while (true) {
                 selector.select();
                 Set<SelectionKey> selectedKeys = selector.selectedKeys();
@@ -186,45 +208,69 @@ public class Server {
                     SelectionKey key = keyIterator.next();
                     keyIterator.remove();
 
-                    if (key.isAcceptable()) {
-                        SocketChannel clientChannel = serverSocket.accept();
-                        if (clientChannel != null) {
-                            clientChannel.configureBlocking(false);
-                            clientChannel.register(selector, SelectionKey.OP_READ);
-                            System.out.println("Accepted connection from " + clientChannel.getRemoteAddress());
-                        }
-                    } else if (key.isReadable()) {
-                        SocketChannel clientChannel = (SocketChannel) key.channel();
-                        ByteBuffer buffer = ByteBuffer.allocate(Integer.parseInt(BUFFER_SIZE.getValue()));
-                        try {
-                            int bytesRead = clientChannel.read(buffer);
-                            if (bytesRead == -1) {
-                                System.out.println("client.Client disconnected: " + clientChannel.getRemoteAddress());
-                                clientChannel.close();
-                                key.cancel();
-                                continue;
-                            }
-                            buffer.flip();
-                            byte[] requestData = new byte[buffer.remaining()];
-                            buffer.get(requestData);
-                            String[] receivedData = new String(requestData).split(" ");
-                            try {
-                                String response = handleCommand(receivedData);
-                                buffer.clear();
-                                buffer.put(response.getBytes());
-                                buffer.flip();
-                                clientChannel.write(buffer);
-                            } catch (NumberFormatException e) {
-                                System.out.println("Invalid input received from client: " + receivedData);
-                            }
-                        } catch (IOException e) {
-                            System.out.println("Error handling client: " + e.getMessage());
-                            key.cancel();
-                            clientChannel.close();
-                        }
-                    }
+                    keyLogic(key, serverSocket, selector);
                 }
             }
         }
+    }
+
+    public static void keyLogic(SelectionKey key,
+                                ServerSocketChannel serverSocket,
+                                Selector selector) throws IOException {
+        if (key.isAcceptable()) {
+            SocketChannel clientChannel = serverSocket.accept();
+            configureClientChannel(clientChannel, selector);
+        } else if (key.isReadable()) {
+            SocketChannel clientChannel = (SocketChannel) key.channel();
+            ByteBuffer buffer = ByteBuffer.allocate(Integer.parseInt(BUFFER_SIZE.getValue()));
+            try {
+                int bytesRead = clientChannel.read(buffer);
+                if (bytesRead == -1) {
+                    closeConnection(clientChannel, key);
+                    return;
+                }
+                buffer.flip();
+                byte[] requestData = new byte[buffer.remaining()];
+                buffer.get(requestData);
+                String[] receivedData = new String(requestData).split(" ");
+                try {
+                    String response = handleCommand(receivedData);
+                    bufferLogic(buffer, response);
+                    clientChannel.write(buffer);
+                } catch (NumberFormatException e) {
+                    System.out.println("Invalid input received from client: " + receivedData);
+                }
+            } catch (IOException e) {
+                System.out.println("Error handling client: " + e.getMessage());
+                closeConnection(clientChannel, key);
+            }
+        }
+    }
+
+    public static void bufferLogic(ByteBuffer buffer, String response) {
+        buffer.clear();
+        buffer.put(response.getBytes());
+        buffer.flip();
+    }
+
+    public static void configureServerSocket(ServerSocketChannel serverSocket, Selector selector) throws IOException {
+        serverSocket.bind(new InetSocketAddress(Integer.parseInt(PORT.getValue())));
+        serverSocket.configureBlocking(false);
+        serverSocket.register(selector, SelectionKey.OP_ACCEPT);
+        System.out.println("Server started on port " + PORT.getValue());
+    }
+
+    public static void configureClientChannel(SocketChannel clientChannel, Selector selector) throws IOException {
+        if (clientChannel != null) {
+            clientChannel.configureBlocking(false);
+            clientChannel.register(selector, SelectionKey.OP_READ);
+            System.out.println("Accepted connection from " + clientChannel.getRemoteAddress());
+        }
+    }
+
+    public static void closeConnection(SocketChannel clientChannel, SelectionKey key) throws IOException {
+        System.out.println("Client disconnected: " + clientChannel.getRemoteAddress());
+        clientChannel.close();
+        key.cancel();
     }
 }

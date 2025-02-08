@@ -15,7 +15,9 @@ public class PlaylistWriter implements Writer<Playlist> {
     @Override
     public void writeToFile(Playlist toAdd) {
         Gson gson = new Gson();
-        Type listType = new TypeToken<ArrayList<Playlist>>() {}.getType();
+        Type listType = new TypeToken<ArrayList<Playlist>>() {
+
+        }.getType();
         List<Playlist> playlistList = new ArrayList<>();
 
         try (FileReader reader = new FileReader("src/data/playlists.json")) {
@@ -27,6 +29,18 @@ public class PlaylistWriter implements Writer<Playlist> {
             e.printStackTrace();
         }
 
+        setAttributes(playlistList, toAdd, gson);
+
+        playlistList.add(toAdd);
+
+        try (FileWriter writer = new FileWriter("src/data/playlists.json")) {
+            gson.toJson(playlistList, writer);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void setAttributes(List<Playlist> playlistList, Playlist toAdd, Gson gson) {
         for (Playlist playlist : playlistList) {
             if (playlist.name().equals(toAdd.name()) && playlist.owner().equals(toAdd.owner())) {
                 playlist.setSongs(toAdd.songs());
@@ -39,17 +53,7 @@ public class PlaylistWriter implements Writer<Playlist> {
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
-                return;
             }
         }
-
-        playlistList.add(toAdd);
-
-        try (FileWriter writer = new FileWriter("src/data/playlists.json")) {
-            gson.toJson(playlistList, writer);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
     }
-
 }

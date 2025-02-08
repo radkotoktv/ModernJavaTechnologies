@@ -15,7 +15,12 @@ public class Playlist {
     private ArrayList<Song> songs;
     private int amountOfPlays;
 
-    public Playlist(String name, String owner, int duration, int numberOfSongs, ArrayList<Song> songs, int amountOfPlays) {
+    public Playlist(String name,
+                    String owner,
+                    int duration,
+                    int numberOfSongs,
+                    ArrayList<Song> songs,
+                    int amountOfPlays) {
         this.name = name;
         this.owner = owner;
         this.duration = duration;
@@ -79,7 +84,12 @@ public class Playlist {
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) return false;
         Playlist playlist = (Playlist) o;
-        return duration == playlist.duration && numberOfSongs == playlist.numberOfSongs && amountOfPlays == playlist.amountOfPlays && Objects.equals(name, playlist.name) && Objects.equals(owner, playlist.owner) && Objects.equals(songs, playlist.songs);
+        return duration == playlist.duration &&
+                numberOfSongs == playlist.numberOfSongs &&
+                amountOfPlays == playlist.amountOfPlays &&
+                Objects.equals(name, playlist.name) &&
+                Objects.equals(owner, playlist.owner) &&
+                Objects.equals(songs, playlist.songs);
     }
 
     @Override
