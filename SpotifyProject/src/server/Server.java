@@ -109,16 +109,7 @@ public class Server {
             return UNSUCCESSFUL_PLAYLIST_SHOW;
         }
 
-        StringBuilder returnString = new StringBuilder(playlist.name() + " "
-                + playlist.owner() + " "
-                + playlist.duration() + " "
-                + playlist.numberOfSongs()
-                + " Songs: {");
-
-        for (Song song : playlist.songs()) {
-            returnString.append(song.title()).append(" ").append(song.artist()).append(" ");
-        }
-        return returnString + "}";
+        return playlist.toString();
     }
 
     public static String top(int numberOfSongs) {
@@ -126,7 +117,7 @@ public class Server {
         songs.stream()
                 .sorted((s1, s2) -> s2.numberOfPlays() - s1.numberOfPlays())
                 .limit(numberOfSongs)
-                .forEach(s -> returnString.append(s.title()).append(" ").append(s.artist()).append(" ").append(s.numberOfPlays()).append("\n"));
+                .forEach(s -> returnString.append(s.toString()).append("\n"));
         return returnString.toString();
     }
 
@@ -168,6 +159,7 @@ public class Server {
             case "create-playlist" -> addPlaylist(new Playlist(receivedData[1], receivedData[2],0, 0, new ArrayList<>(), 0));
             case "add-song-to" -> handleSongAddition(receivedData[1], receivedData[2], receivedData[3]);
             case "show-playlist" -> showPlaylist(receivedData[1]);
+            case "show-songs" -> songs.toString();
             case "play" -> "You have selected the play option!";
             case "stop" -> "You have selected the stop option!";
             case "user" -> PRINT_USER;

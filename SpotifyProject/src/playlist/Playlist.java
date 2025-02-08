@@ -86,4 +86,16 @@ public class Playlist {
     public int hashCode() {
         return Objects.hash(name, owner, duration, numberOfSongs, songs, amountOfPlays);
     }
+
+    @Override
+    public String toString() {
+        return "Playlist{" +
+                "name='" + name + '\'' +
+                ", owner='" + owner + '\'' +
+                ", duration=" + duration +
+                ", numberOfSongs=" + numberOfSongs +
+                ", songs=" + songs +
+                ", amountOfPlays=" + amountOfPlays +
+                '}';
+    }
 }
