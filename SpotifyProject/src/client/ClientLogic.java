@@ -1,5 +1,6 @@
 package client;
 
+import exception.DisconnectedFromServerException;
 import player.WavPlayer;
 import user.User;
 
@@ -135,7 +136,7 @@ public class ClientLogic {
                 }
             }
         } catch (IOException | InterruptedException e) {
-            System.out.println("Disconnected from server.");
+            throw new DisconnectedFromServerException("Disconnected from server!");
         }
     }
 }

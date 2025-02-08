@@ -2,6 +2,8 @@ package file.writer;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import exception.FileReaderException;
+import exception.FileWriterException;
 import user.User;
 
 import java.io.FileReader;
@@ -18,19 +20,19 @@ public class UserWriter implements Writer<User> {
         Type listType = new TypeToken<ArrayList<User>>() {
 
         }.getType();
-        List<User> userList = new ArrayList<>();
+        List<User> userList;
 
         try (FileReader reader = new FileReader("src/data/users.json")) {
             userList = gson.fromJson(reader, listType);
         } catch (IOException e) {
-            e.printStackTrace();
+            throw new FileReaderException("Error reading from file in UserWriter");
         }
         userList.add(toAdd);
 
         try (FileWriter writer = new FileWriter("src/data/users.json")) {
             gson.toJson(userList, writer);
         } catch (IOException e) {
-            e.printStackTrace();
+            throw new FileWriterException("Error writing to file in UserWriter");
         }
     }
 }

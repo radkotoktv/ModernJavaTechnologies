@@ -3,6 +3,7 @@ package file.reader;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
+import exception.FileReaderException;
 import song.Song;
 
 import java.io.FileReader;
@@ -18,8 +19,7 @@ public class SongReader implements Reader {
 
             }.getType());
         } catch (IOException e) {
-            e.printStackTrace();
+            throw new FileReaderException("Error reading from file in SongReader");
         }
-        return null;
     }
 }

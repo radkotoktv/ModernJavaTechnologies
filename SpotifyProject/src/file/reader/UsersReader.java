@@ -3,6 +3,7 @@ package file.reader;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
+import exception.FileReaderException;
 import user.User;
 
 import java.io.FileReader;
@@ -18,9 +19,8 @@ public class UsersReader implements Reader {
 
             }.getType());
         } catch (IOException e) {
-            e.printStackTrace();
+            throw new FileReaderException("Error reading from file in UsersReader");
 
         }
-        return null;
     }
 }

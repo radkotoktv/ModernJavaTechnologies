@@ -1,5 +1,7 @@
 package player;
 
+import exception.WavPlayerException;
+
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.AudioSystem;
@@ -47,7 +49,7 @@ public class WavPlayer implements Runnable {
                 audioLine.drain();
             }
         } catch (UnsupportedAudioFileException | IOException | LineUnavailableException e) {
-            e.printStackTrace();
+            throw new WavPlayerException("Error playing WAV file");
         }
     }
 
