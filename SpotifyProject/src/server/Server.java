@@ -109,7 +109,12 @@ public class Server {
             return UNSUCCESSFUL_PLAYLIST_SHOW;
         }
 
-        StringBuilder returnString = new StringBuilder(playlist.name() + " " + playlist.owner() + " " + playlist.duration() + " " + playlist.numberOfSongs() + " Songs: {");
+        StringBuilder returnString = new StringBuilder(playlist.name() + " "
+                + playlist.owner() + " "
+                + playlist.duration() + " "
+                + playlist.numberOfSongs()
+                + " Songs: {");
+
         for (Song song : playlist.songs()) {
             returnString.append(song.title()).append(" ").append(song.artist()).append(" ");
         }
@@ -123,6 +128,15 @@ public class Server {
                 .limit(numberOfSongs)
                 .forEach(s -> returnString.append(s.title()).append(" ").append(s.artist()).append(" ").append(s.numberOfPlays()).append("\n"));
         return returnString.toString();
+    }
+
+    public static String[] parseInput(String[] words) {
+        String[] parsedWords = new String[words.length - 1];
+        int index = 0;
+        for (int i = 1; i < words.length; i++) {
+            parsedWords[index] = words[i];
+        }
+        return parsedWords;
     }
 
     public static String search(String... words) {
@@ -149,7 +163,7 @@ public class Server {
             case "register" -> registerUser(new User(receivedData[1], receivedData[2]));
             case "login" -> login(receivedData[1], receivedData[2]);
             case "disconnect" -> "You have selected the disconnect option!";
-            case "search" -> search();
+            case "search" -> search(parseInput(receivedData));
             case "top" -> top(Integer.parseInt(receivedData[1]));
             case "create-playlist" -> addPlaylist(new Playlist(receivedData[1], receivedData[2],0, 0, new ArrayList<>(), 0));
             case "add-song-to" -> handleSongAddition(receivedData[1], receivedData[2], receivedData[3]);

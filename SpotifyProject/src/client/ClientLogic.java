@@ -21,8 +21,9 @@ public class ClientLogic {
         return switch(command[0]) {
             case "register", "login" -> command.length == 3;
             case "disconnect", "stop", "user", "logout" -> command.length == 1 && currentUser != null;
-            case "search", "play", "show-playlist", "create-playlist", "top" -> command.length == 2 && currentUser != null;
+            case "play", "show-playlist", "create-playlist", "top" -> command.length == 2 && currentUser != null;
             case "add-song-to" -> command.length == 3 && currentUser != null;
+            case "search" -> command.length > 1 && currentUser != null;
             default -> false;
         };
     }
@@ -56,6 +57,7 @@ public class ClientLogic {
                 } else {
                     System.out.println(response);
                 }
+                break;
             }
             case "search": {
                 System.out.println(response);
