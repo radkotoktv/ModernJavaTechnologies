@@ -37,7 +37,7 @@ public class WavPlayer implements Runnable {
                 int bytesRead;
                 try {
                     while ((bytesRead = audioStream.read(buffer)) != -1) {
-                        if (Thread.currentThread().isInterrupted()) {
+                        if (Thread.interrupted()) {
                             throw new InterruptedException();
                         }
                         audioLine.write(buffer, 0, bytesRead);

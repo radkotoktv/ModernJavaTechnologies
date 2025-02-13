@@ -10,11 +10,31 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 
-public class SongReader implements Reader {
+public final class SongReader extends Reader {
+    private static volatile SongReader instance;
+
+    private SongReader(String filePath) {
+        super(filePath);
+    }
+
+    public static SongReader getInstance(String filePath) {
+        SongReader result = instance;
+        if (result != null) {
+            return result;
+        }
+
+        synchronized (SongReader.class) {
+            if (instance == null) {
+                instance = new SongReader(filePath);
+            }
+            return instance;
+        }
+    }
+
     @Override
     public ArrayList<Song> readFromFile() {
         Gson gson = new Gson();
-        try (FileReader reader = new FileReader("src/data/songs.json")) {
+        try (FileReader reader = new FileReader(filePath)) {
             return gson.fromJson(reader, new TypeToken<ArrayList<Song>>() {
 
             }.getType());

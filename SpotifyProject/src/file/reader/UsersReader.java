@@ -10,11 +10,31 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 
-public class UsersReader implements Reader {
+public final class UsersReader extends Reader {
+    private static volatile UsersReader instance;
+
+    private UsersReader(String filePath) {
+        super(filePath);
+    }
+
+    public static UsersReader getInstance(String filePath) {
+        UsersReader result = instance;
+        if (result != null) {
+            return instance;
+        }
+
+        synchronized (UsersReader.class) {
+            if (instance == null) {
+                instance = new UsersReader(filePath);
+            }
+            return instance;
+        }
+    }
+
     @Override
     public ArrayList<User> readFromFile() {
         Gson gson = new Gson();
-        try (FileReader reader = new FileReader("src/data/users.json")) {
+        try (FileReader reader = new FileReader(filePath)) {
             return gson.fromJson(reader, new TypeToken<ArrayList<User>>() {
 
             }.getType());

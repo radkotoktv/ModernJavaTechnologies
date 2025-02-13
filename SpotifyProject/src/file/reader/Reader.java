@@ -2,6 +2,12 @@ package file.reader;
 
 import java.util.ArrayList;
 
-public interface Reader {
-    public ArrayList<?> readFromFile();
+public abstract class Reader {
+    protected final String filePath;
+
+    protected Reader(String filePath) {
+        this.filePath = filePath;
+    }
+
+    public abstract ArrayList<?> readFromFile();
 }

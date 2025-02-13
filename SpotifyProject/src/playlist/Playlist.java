@@ -1,18 +1,19 @@
 package playlist;
 
+import file.writer.PlaylistWriter;
 import song.Song;
 
 import java.util.ArrayList;
 import java.util.Objects;
 
-import static constants.Constant.PLAYLIST_WRITER;
+import static constants.Constant.PLAYLISTS_PATH;
 
 public class Playlist {
     private final String name;
     private final String owner;
     private int duration;
     private int numberOfSongs;
-    private ArrayList<Song> songs;
+    private ArrayList<Song> songs; // ArrayList -> List
     private int amountOfPlays;
 
     public Playlist(String name,
@@ -35,9 +36,9 @@ public class Playlist {
             return;
         }
         songs.add(newSong);
-        this.numberOfSongs++;
-        this.duration += newSong.duration();
-        PLAYLIST_WRITER.writeToFile(this);
+        numberOfSongs++;
+        duration += newSong.duration();
+        PlaylistWriter.getInstance(PLAYLISTS_PATH).writeToFile(this);
     }
 
     public String name() {

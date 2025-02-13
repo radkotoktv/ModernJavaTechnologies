@@ -1,12 +1,6 @@
 package constants;
 
-import file.reader.PlaylistReader;
-import file.reader.SongReader;
-import file.reader.UsersReader;
-import file.writer.PlaylistWriter;
-import file.writer.UserWriter;
-
-public enum Constant {
+public enum Constant { // Can be multiple files
     PORT("7777"),
     BUFFER_SIZE("1024"),
     SERVER_HOST("localhost");
@@ -18,11 +12,9 @@ public enum Constant {
 
     public static final int WAV_BUFFER_SIZE = 4096;
 
-    public static final UsersReader USERS_READER = new UsersReader();
-    public static final SongReader SONGS_READER = new SongReader();
-    public static final PlaylistReader PLAYLIST_READER = new PlaylistReader();
-    public static final UserWriter USER_WRITER = new UserWriter();
-    public static final PlaylistWriter PLAYLIST_WRITER = new PlaylistWriter();
+    public static final String USERS_PATH = "src/data/users.json";
+    public static final String SONGS_PATH = "src/data/songs.json";
+    public static final String PLAYLISTS_PATH = "src/data/playlists.json";
 
     public static final String SUCCESSFUL_REGISTRATION = "You have been registered to the system!";
     public static final String SUCCESSFUL_LOGIN = "You have successfully logged in!";

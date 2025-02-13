@@ -1,5 +1,10 @@
 package server;
 
+import file.reader.PlaylistReader;
+import file.reader.SongReader;
+import file.reader.UsersReader;
+import file.writer.PlaylistWriter;
+import file.writer.UserWriter;
 import playlist.Playlist;
 import song.Song;
 import user.User;
@@ -20,26 +25,24 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static constants.Constant.USERS_READER;
-import static constants.Constant.SONGS_READER;
-import static constants.Constant.PLAYLIST_READER;
-import static constants.Constant.USER_WRITER;
-import static constants.Constant.PLAYLIST_WRITER;
-import static constants.Constant.PORT;
-import static constants.Constant.BUFFER_SIZE;
-import static constants.Constant.SUCCESSFUL_REGISTRATION;
-import static constants.Constant.SUCCESSFUL_LOGIN;
-import static constants.Constant.SUCCESSFUL_PLAYLIST_CREATION;
-import static constants.Constant.SUCCESSFUL_SONG_ADDITION;
-import static constants.Constant.PRINT_USER;
-import static constants.Constant.SUCCESSFUL_LOGOUT;
-import static constants.Constant.UNSUCCESSFUL_PLAYLIST_SHOW;
-import static constants.Constant.HELP_TEXT;
-import static constants.Constant.STOP_SONG;
-import static constants.Constant.SONG_NOT_FOUND;
 import static constants.Constant.ONE;
 import static constants.Constant.TWO;
 import static constants.Constant.THREE;
+import static constants.Constant.USERS_PATH;
+import static constants.Constant.SONGS_PATH;
+import static constants.Constant.PLAYLISTS_PATH;
+import static constants.Constant.SUCCESSFUL_LOGIN;
+import static constants.Constant.SUCCESSFUL_REGISTRATION;
+import static constants.Constant.SUCCESSFUL_PLAYLIST_CREATION;
+import static constants.Constant.SUCCESSFUL_SONG_ADDITION;
+import static constants.Constant.SONG_NOT_FOUND;
+import static constants.Constant.UNSUCCESSFUL_PLAYLIST_SHOW;
+import static constants.Constant.STOP_SONG;
+import static constants.Constant.PRINT_USER;
+import static constants.Constant.SUCCESSFUL_LOGOUT;
+import static constants.Constant.HELP_TEXT;
+import static constants.Constant.BUFFER_SIZE;
+import static constants.Constant.PORT;
 
 public class Server {
     private static ArrayList<User> users;
@@ -52,9 +55,9 @@ public class Server {
     }
 
     public Server() {
-        users = USERS_READER.readFromFile();
-        songs = SONGS_READER.readFromFile();
-        playlists = PLAYLIST_READER.readFromFile();
+        users = UsersReader.getInstance(USERS_PATH).readFromFile();
+        songs = SongReader.getInstance(SONGS_PATH).readFromFile();
+        playlists = PlaylistReader.getInstance(PLAYLISTS_PATH).readFromFile();
     }
 
     public String registerUser(User newUser) {
@@ -62,7 +65,7 @@ public class Server {
             return "User already exists!";
         }
         users.add(newUser);
-        USER_WRITER.writeToFile(newUser);
+        UserWriter.getInstance(USERS_PATH).writeToFile(newUser);
         return SUCCESSFUL_REGISTRATION;
     }
 
@@ -79,7 +82,7 @@ public class Server {
             return "Playlist already exists!";
         }
         playlists.add(newPlaylist);
-        PLAYLIST_WRITER.writeToFile(newPlaylist);
+        PlaylistWriter.getInstance(PLAYLISTS_PATH).writeToFile(newPlaylist);
 
         return SUCCESSFUL_PLAYLIST_CREATION;
     }

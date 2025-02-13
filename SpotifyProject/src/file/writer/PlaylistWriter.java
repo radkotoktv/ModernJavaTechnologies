@@ -13,21 +13,41 @@ import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 
-public class PlaylistWriter implements Writer<Playlist> {
+public class PlaylistWriter extends Writer<Playlist> {
+    private static volatile PlaylistWriter instance;
+
+    private PlaylistWriter(String filePath) {
+        super(filePath);
+    }
+
+    public static PlaylistWriter getInstance(String filePath) {
+        PlaylistWriter result = instance;
+        if (result != null) {
+            return result;
+        }
+
+        synchronized (PlaylistWriter.class) {
+            if (instance == null) {
+                instance = new PlaylistWriter(filePath);
+            }
+            return instance;
+        }
+    }
+
     @Override
     public void writeToFile(Playlist toAdd) {
-        Gson gson = new Gson();
+        Gson gson = new Gson(); // Move above
         Type listType = new TypeToken<ArrayList<Playlist>>() {
 
         }.getType();
         List<Playlist> playlistList;
 
-        try (FileReader reader = new FileReader("src/data/playlists.json")) {
+        try (FileReader reader = new FileReader(filePath)) {
             playlistList = gson.fromJson(reader, listType);
             if (playlistList == null) {
                 playlistList = new ArrayList<>();
             }
-        } catch (IOException e) {
+        } catch (IOException | FileReaderException e) {
             throw new FileReaderException("Error reading from file in PlaylistWriter");
         }
 
@@ -35,7 +55,7 @@ public class PlaylistWriter implements Writer<Playlist> {
 
         playlistList.add(toAdd);
 
-        try (FileWriter writer = new FileWriter("src/data/playlists.json")) {
+        try (FileWriter writer = new FileWriter(filePath)) {
             gson.toJson(playlistList, writer);
         } catch (IOException e) {
             throw new FileWriterException("Error writing to file in PlaylistWriter");
@@ -50,7 +70,7 @@ public class PlaylistWriter implements Writer<Playlist> {
                 playlist.setNumberOfSongs(toAdd.numberOfSongs());
                 playlist.setAmountOfPlays(toAdd.amountOfPlays());
 
-                try (FileWriter writer = new FileWriter("src/data/playlists.json")) {
+                try (FileWriter writer = new FileWriter(filePath)) {
                     gson.toJson(playlistList, writer);
                 } catch (IOException e) {
                     throw new FileWriterException("Error writing to file in PlaylistWriter's setAttributes method");
