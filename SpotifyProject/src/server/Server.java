@@ -47,13 +47,17 @@ public class Server {
     private static ArrayList<Playlist> playlists;
 
     public static void main(String... args) throws IOException {
+        Server server = new Server();
+        server.runServer();
+    }
+
+    public Server() {
         users = USERS_READER.readFromFile();
         songs = SONGS_READER.readFromFile();
         playlists = PLAYLIST_READER.readFromFile();
-        createServer();
     }
 
-    public static String registerUser(User newUser) {
+    public String registerUser(User newUser) {
         if (users.contains(newUser)) {
             return "User already exists!";
         }
@@ -62,7 +66,7 @@ public class Server {
         return SUCCESSFUL_REGISTRATION;
     }
 
-    public static String login(String password, String email) {
+    public String login(String password, String email) {
         User toLogin = new User(password, email);
         if (!users.contains(toLogin)) {
             return "User not found!";
@@ -70,7 +74,7 @@ public class Server {
         return SUCCESSFUL_LOGIN;
     }
 
-    public static String addPlaylist(Playlist newPlaylist) {
+    public String addPlaylist(Playlist newPlaylist) {
         if (playlists.contains(newPlaylist)) {
             return "Playlist already exists!";
         }
@@ -80,7 +84,7 @@ public class Server {
         return SUCCESSFUL_PLAYLIST_CREATION;
     }
 
-    public static String handleSongAddition(String playlistName, String songName, String ownerEmail) {
+    public String handleSongAddition(String playlistName, String songName, String ownerEmail) {
         Playlist playlist = playlists.stream()
                 .filter(p -> p.name().equals(playlistName))
                 .findFirst()
@@ -108,7 +112,7 @@ public class Server {
         return SUCCESSFUL_SONG_ADDITION;
     }
 
-    public static String showPlaylist(String playlistName) {
+    public String showPlaylist(String playlistName) {
         Playlist playlist = playlists.stream()
                 .filter(p -> p.name().equals(playlistName))
                 .findFirst()
@@ -120,7 +124,7 @@ public class Server {
         return playlist.toString();
     }
 
-    public static String top(int numberOfSongs) {
+    public String top(int numberOfSongs) {
         StringBuilder returnString = new StringBuilder("Top " + numberOfSongs + " songs:\n");
         songs.stream()
                 .sorted((s1, s2) -> s2.numberOfPlays() - s1.numberOfPlays())
@@ -129,12 +133,12 @@ public class Server {
         return returnString.toString();
     }
 
-    public static List<String> parseInput(String[] words) {
+    public List<String> parseInput(String[] words) {
         return java.util.Arrays.stream(words, ONE, words.length - 1)
                 .collect(Collectors.toList());
     }
 
-    public static String search(List<String> words) {
+    public String search(List<String> words) {
         StringBuilder returnString = new StringBuilder("Songs containing ");
         for (String word : words) {
             returnString.append(word).append(" ");
@@ -153,7 +157,7 @@ public class Server {
         return returnString.toString();
     }
 
-    public static String play(String songName) {
+    public String play(String songName) {
         if (songName == null) {
             return SONG_NOT_FOUND;
         }
@@ -171,7 +175,7 @@ public class Server {
         return song.fileName();
     }
 
-    public static String handleCommand(String[] receivedData) {
+    public String handleCommand(String[] receivedData) {
         return switch (receivedData[0]) {
             case "register" -> registerUser(new User(receivedData[ONE], receivedData[TWO]));
             case "login" -> login(receivedData[ONE], receivedData[TWO]);
@@ -196,7 +200,7 @@ public class Server {
         };
     }
 
-    public static void createServer() throws IOException {
+    public void runServer() throws IOException {
         try (ServerSocketChannel serverSocket = ServerSocketChannel.open(); Selector selector = Selector.open()) {
             configureServerSocket(serverSocket, selector);
             while (true) {
@@ -214,7 +218,7 @@ public class Server {
         }
     }
 
-    public static void keyLogic(SelectionKey key,
+    public void keyLogic(SelectionKey key,
                                 ServerSocketChannel serverSocket,
                                 Selector selector) throws IOException {
         if (key.isAcceptable()) {
@@ -247,20 +251,20 @@ public class Server {
         }
     }
 
-    public static void bufferLogic(ByteBuffer buffer, String response) {
+    public void bufferLogic(ByteBuffer buffer, String response) {
         buffer.clear();
         buffer.put(response.getBytes());
         buffer.flip();
     }
 
-    public static void configureServerSocket(ServerSocketChannel serverSocket, Selector selector) throws IOException {
+    public void configureServerSocket(ServerSocketChannel serverSocket, Selector selector) throws IOException {
         serverSocket.bind(new InetSocketAddress(Integer.parseInt(PORT.getValue())));
         serverSocket.configureBlocking(false);
         serverSocket.register(selector, SelectionKey.OP_ACCEPT);
         System.out.println("Server started on port " + PORT.getValue());
     }
 
-    public static void configureClientChannel(SocketChannel clientChannel, Selector selector) throws IOException {
+    public void configureClientChannel(SocketChannel clientChannel, Selector selector) throws IOException {
         if (clientChannel != null) {
             clientChannel.configureBlocking(false);
             clientChannel.register(selector, SelectionKey.OP_READ);
@@ -268,7 +272,7 @@ public class Server {
         }
     }
 
-    public static void closeConnection(SocketChannel clientChannel, SelectionKey key) throws IOException {
+    public void closeConnection(SocketChannel clientChannel, SelectionKey key) throws IOException {
         System.out.println("Client disconnected: " + clientChannel.getRemoteAddress());
         clientChannel.close();
         key.cancel();
