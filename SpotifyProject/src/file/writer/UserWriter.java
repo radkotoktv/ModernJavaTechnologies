@@ -45,14 +45,14 @@ public class UserWriter extends Writer<User> {
         try (FileReader reader = new FileReader(filePath)) {
             userList = gson.fromJson(reader, listType);
         } catch (IOException e) {
-            throw new FileReaderException("Error reading from file in UserWriter");
+            throw new FileReaderException("Error reading from file in UserWriter", e);
         }
         userList.add(toAdd);
 
         try (FileWriter writer = new FileWriter(filePath)) {
             gson.toJson(userList, writer);
         } catch (IOException e) {
-            throw new FileWriterException("Error writing to file in UserWriter");
+            throw new FileWriterException("Error writing to file in UserWriter", e);
         }
     }
 }

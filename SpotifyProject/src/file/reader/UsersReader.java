@@ -39,7 +39,7 @@ public final class UsersReader extends Reader {
 
             }.getType());
         } catch (IOException e) {
-            throw new FileReaderException("Error reading from file in UsersReader");
+            throw new FileReaderException("Error reading from file in UsersReader", e);
 
         }
     }

@@ -49,7 +49,7 @@ public class WavPlayer implements Runnable {
                 audioLine.drain();
             }
         } catch (UnsupportedAudioFileException | IOException | LineUnavailableException e) {
-            throw new WavPlayerException("Error playing WAV file");
+            throw new WavPlayerException("Error playing WAV file", e);
         }
     }
 

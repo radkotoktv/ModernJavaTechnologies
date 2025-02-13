@@ -143,7 +143,7 @@ public class Client {
                 }
             }
         } catch (IOException | InterruptedException e) {
-            throw new DisconnectedFromServerException("Disconnected from server!");
+            throw new DisconnectedFromServerException("Disconnected from server!", e);
         }
     }
 }

@@ -45,14 +45,14 @@ public class SongWriter extends Writer<Song> {
         try (FileReader reader = new FileReader(filePath)) {
             songList = gson.fromJson(reader, listType);
         } catch (IOException e) {
-            throw new FileReaderException("Error reading from file in SongWriter");
+            throw new FileReaderException("Error reading from file in SongWriter", e);
         }
         songList.add(toAdd);
 
         try (FileWriter writer = new FileWriter(filePath)) {
             gson.toJson(songList, writer);
         } catch (IOException e) {
-            throw new FileWriterException("Error writing to file in SongWriter");
+            throw new FileWriterException("Error writing to file in SongWriter", e);
         }
     }
 }

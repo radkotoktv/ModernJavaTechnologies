@@ -39,7 +39,7 @@ public final class SongReader extends Reader {
 
             }.getType());
         } catch (IOException e) {
-            throw new FileReaderException("Error reading from file in SongReader");
+            throw new FileReaderException("Error reading from file in SongReader", e);
         }
     }
 }

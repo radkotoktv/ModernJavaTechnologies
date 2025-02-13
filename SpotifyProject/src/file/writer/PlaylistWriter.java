@@ -48,7 +48,7 @@ public class PlaylistWriter extends Writer<Playlist> {
                 playlistList = new ArrayList<>();
             }
         } catch (IOException | FileReaderException e) {
-            throw new FileReaderException("Error reading from file in PlaylistWriter");
+            throw new FileReaderException("Error reading from file in PlaylistWriter", e);
         }
 
         setAttributes(playlistList, toAdd, gson);
@@ -58,7 +58,7 @@ public class PlaylistWriter extends Writer<Playlist> {
         try (FileWriter writer = new FileWriter(filePath)) {
             gson.toJson(playlistList, writer);
         } catch (IOException e) {
-            throw new FileWriterException("Error writing to file in PlaylistWriter");
+            throw new FileWriterException("Error writing to file in PlaylistWriter", e);
         }
     }
 
@@ -73,7 +73,7 @@ public class PlaylistWriter extends Writer<Playlist> {
                 try (FileWriter writer = new FileWriter(filePath)) {
                     gson.toJson(playlistList, writer);
                 } catch (IOException e) {
-                    throw new FileWriterException("Error writing to file in PlaylistWriter's setAttributes method");
+                    throw new FileWriterException("Error writing to file in PlaylistWriter's setAttributes method", e);
                 }
             }
         }

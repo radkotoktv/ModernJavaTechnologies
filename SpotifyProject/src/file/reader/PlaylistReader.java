@@ -39,7 +39,7 @@ public final class PlaylistReader extends Reader {
 
             }.getType());
         } catch (IOException e) {
-            throw new FileReaderException("Error reading from file in PlaylistReader");
+            throw new FileReaderException("Error reading from file in PlaylistReader", e);
         }
     }
 }
