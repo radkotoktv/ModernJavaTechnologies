@@ -10,7 +10,7 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.lang.reflect.Type;
-import java.util.ArrayList;
+
 import java.util.List;
 
 public final class SongWriter extends Writer<Song> {
@@ -37,7 +37,7 @@ public final class SongWriter extends Writer<Song> {
     @Override
     public void writeToFile(Song toAdd) {
         Gson gson = new Gson();
-        Type listType = new TypeToken<ArrayList<Song>>() {
+        Type listType = new TypeToken<List<Song>>() {
 
         }.getType();
         List<Song> songList;

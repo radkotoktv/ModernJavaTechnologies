@@ -10,7 +10,6 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.lang.reflect.Type;
-import java.util.ArrayList;
 import java.util.List;
 
 public final class PlaylistWriter extends Writer<Playlist> {
@@ -37,7 +36,7 @@ public final class PlaylistWriter extends Writer<Playlist> {
     @Override
     public void writeToFile(Playlist toAdd) {
         Gson gson = new Gson(); // Move above
-        Type listType = new TypeToken<ArrayList<Playlist>>() {
+        Type listType = new TypeToken<List<Playlist>>() {
 
         }.getType();
         List<Playlist> playlistList;
@@ -45,7 +44,7 @@ public final class PlaylistWriter extends Writer<Playlist> {
         try (FileReader reader = new FileReader(filePath)) {
             playlistList = gson.fromJson(reader, listType);
             if (playlistList == null) {
-                playlistList = new ArrayList<>();
+                playlistList = List.of();
             }
         } catch (IOException | FileReaderException e) {
             throw new FileReaderException("Error reading from file in PlaylistWriter", e);

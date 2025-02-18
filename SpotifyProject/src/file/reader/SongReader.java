@@ -8,7 +8,8 @@ import song.Song;
 
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.ArrayList;
+
+import java.util.List;
 
 public final class SongReader extends Reader {
     private static volatile SongReader instance;
@@ -32,10 +33,10 @@ public final class SongReader extends Reader {
     }
 
     @Override
-    public ArrayList<Song> readFromFile() {
+    public List<Song> readFromFile() {
         Gson gson = new Gson();
         try (FileReader reader = new FileReader(filePath)) {
-            return gson.fromJson(reader, new TypeToken<ArrayList<Song>>() {
+            return gson.fromJson(reader, new TypeToken<List<Song>>() {
 
             }.getType());
         } catch (IOException e) {

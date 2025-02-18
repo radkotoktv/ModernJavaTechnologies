@@ -4,11 +4,13 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
 import exception.FileReaderException;
+
 import playlist.Playlist;
 
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.ArrayList;
+
+import java.util.List;
 
 public final class PlaylistReader extends Reader {
     private static volatile PlaylistReader instance;
@@ -32,10 +34,10 @@ public final class PlaylistReader extends Reader {
     }
 
     @Override
-    public ArrayList<Playlist> readFromFile() {
+    public List<Playlist> readFromFile() {
         Gson gson = new Gson();
         try (FileReader reader = new FileReader(filePath)) {
-            return gson.fromJson(reader, new TypeToken<ArrayList<Playlist>>() {
+            return gson.fromJson(reader, new TypeToken<List<Playlist>>() {
 
             }.getType());
         } catch (IOException e) {

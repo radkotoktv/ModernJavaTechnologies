@@ -1,6 +1,6 @@
 package file.reader;
 
-import java.util.ArrayList;
+import java.util.List;
 
 public abstract class Reader {
     protected final String filePath;
@@ -9,5 +9,5 @@ public abstract class Reader {
         this.filePath = filePath;
     }
 
-    public abstract ArrayList<?> readFromFile();
+    public abstract List<?> readFromFile();
 }

@@ -8,7 +8,8 @@ import user.User;
 
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.ArrayList;
+
+import java.util.List;
 
 public final class UsersReader extends Reader {
     private static volatile UsersReader instance;
@@ -32,10 +33,10 @@ public final class UsersReader extends Reader {
     }
 
     @Override
-    public ArrayList<User> readFromFile() {
+    public List<User> readFromFile() {
         Gson gson = new Gson();
         try (FileReader reader = new FileReader(filePath)) {
-            return gson.fromJson(reader, new TypeToken<ArrayList<User>>() {
+            return gson.fromJson(reader, new TypeToken<List<User>>() {
 
             }.getType());
         } catch (IOException e) {

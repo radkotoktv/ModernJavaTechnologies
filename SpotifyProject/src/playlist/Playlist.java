@@ -3,7 +3,7 @@ package playlist;
 import file.writer.PlaylistWriter;
 import song.Song;
 
-import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 import static communication.ConnectConstants.PLAYLISTS_PATH;
@@ -13,14 +13,14 @@ public class Playlist {
     private final String owner;
     private int duration;
     private int numberOfSongs;
-    private ArrayList<Song> songs; // ArrayList -> List
+    private List<Song> songs;
     private int amountOfPlays;
 
     public Playlist(String name,
                     String owner,
                     int duration,
                     int numberOfSongs,
-                    ArrayList<Song> songs,
+                    List<Song> songs,
                     int amountOfPlays) {
         this.name = name;
         this.owner = owner;
@@ -65,11 +65,11 @@ public class Playlist {
         this.numberOfSongs = numberOfSongs;
     }
 
-    public ArrayList<Song> songs() {
+    public List<Song> songs() {
         return songs;
     }
 
-    public void setSongs(ArrayList<Song> songs) {
+    public void setSongs(List<Song> songs) {
         this.songs = songs;
     }
 
@@ -85,12 +85,7 @@ public class Playlist {
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) return false;
         Playlist playlist = (Playlist) o;
-        return duration == playlist.duration &&
-                numberOfSongs == playlist.numberOfSongs &&
-                amountOfPlays == playlist.amountOfPlays &&
-                Objects.equals(name, playlist.name) &&
-                Objects.equals(owner, playlist.owner) &&
-                Objects.equals(songs, playlist.songs);
+        return Objects.equals(name, playlist.name);
     }
 
     @Override

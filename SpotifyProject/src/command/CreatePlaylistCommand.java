@@ -3,7 +3,7 @@ package command;
 import file.writer.PlaylistWriter;
 import playlist.Playlist;
 
-import java.util.ArrayList;
+import java.util.List;
 
 import static communication.ConnectConstants.PLAYLISTS_PATH;
 import static communication.ResponseConstants.SUCCESSFUL_PLAYLIST_CREATION;
@@ -24,7 +24,7 @@ public class CreatePlaylistCommand extends Command {
                 owner,
                 0,
                 0,
-                new ArrayList<>(),
+                List.of(),
                 0);
         if (playlists.contains(newPlaylist)) {
             return "Playlist already exists!";

@@ -10,7 +10,7 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.lang.reflect.Type;
-import java.util.ArrayList;
+
 import java.util.List;
 
 public final class UserWriter extends Writer<User> {
@@ -37,7 +37,7 @@ public final class UserWriter extends Writer<User> {
     @Override
     public void writeToFile(User toAdd) {
         Gson gson = new Gson();
-        Type listType = new TypeToken<ArrayList<User>>() {
+        Type listType = new TypeToken<List<User>>() {
 
         }.getType();
         List<User> userList;

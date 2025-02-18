@@ -41,7 +41,7 @@ public class Client {
         return switch(command[0]) {
             case "register", "login" ->
                     command.length == THREE;
-            case "disconnect", "stop", "user", "logout", "show-songs", "help" ->
+            case "stop", "user", "logout", "show-songs", "help" ->
                     command.length == ONE && currentUser != null;
             case "play", "show-playlist", "create-playlist", "top" ->
                     command.length == TWO && currentUser != null;
@@ -49,6 +49,8 @@ public class Client {
                     command.length == THREE && currentUser != null;
             case "search" ->
                     command.length > ONE && currentUser != null;
+            case "disconnect" ->
+                    command.length == ONE;
             default -> false;
         };
     }
