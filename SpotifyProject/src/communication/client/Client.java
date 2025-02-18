@@ -58,6 +58,7 @@ public class Client {
     public void handleLogin(String[] command, String response) {
         if (response.equals(SUCCESSFUL_LOGIN)) {
             currentUser = new User(command[ONE], command[TWO]);
+            System.out.println("You have logged in successfully!");
         } else {
             System.out.println("Invalid credentials!");
         }
@@ -123,7 +124,7 @@ public class Client {
             while (true) {
                 System.out.print("Enter a command: ");
                 String userInput = scanner.nextLine();
-                String[] command = userInput.split(" ");
+                String[] command = userInput.split("\\s+");
                 if (!validateCommand(command)) {
                     continue;
                 }
@@ -144,7 +145,7 @@ public class Client {
                 }
             }
         } catch (IOException | InterruptedException e) {
-            throw new DisconnectedFromServerException("Disconnected from communication.client.server!", e);
+            throw new DisconnectedFromServerException("Disconnected from server!", e);
         }
     }
 }
