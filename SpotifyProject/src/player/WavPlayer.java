@@ -13,7 +13,7 @@ import javax.sound.sampled.UnsupportedAudioFileException;
 import java.io.File;
 import java.io.IOException;
 
-import static constants.Constant.WAV_BUFFER_SIZE;
+import static player.WAVPlayerConstants.WAV_BUFFER_SIZE;
 
 public class WavPlayer implements Runnable {
     private final String fileName;

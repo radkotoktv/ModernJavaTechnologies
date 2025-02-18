@@ -13,7 +13,7 @@ import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 
-public class UserWriter extends Writer<User> {
+public final class UserWriter extends Writer<User> {
     private static volatile UserWriter instance;
 
     private UserWriter(String filePath) {

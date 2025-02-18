@@ -13,7 +13,7 @@ import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 
-public class SongWriter extends Writer<Song> {
+public final class SongWriter extends Writer<Song> {
     private static volatile SongWriter instance;
 
     private SongWriter(String filePath) {

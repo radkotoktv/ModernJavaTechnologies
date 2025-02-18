@@ -1,10 +1,14 @@
-package server;
+package communication.server;
 
 import file.reader.PlaylistReader;
 import file.reader.SongReader;
 import file.reader.UsersReader;
 import file.writer.PlaylistWriter;
 import file.writer.UserWriter;
+import static communication.ConnectConstants.USERS_PATH;
+import static communication.ConnectConstants.SONGS_PATH;
+import static communication.ConnectConstants.PLAYLISTS_PATH;
+
 import playlist.Playlist;
 import song.Song;
 import user.User;
@@ -25,24 +29,21 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static constants.Constant.ONE;
-import static constants.Constant.TWO;
-import static constants.Constant.THREE;
-import static constants.Constant.USERS_PATH;
-import static constants.Constant.SONGS_PATH;
-import static constants.Constant.PLAYLISTS_PATH;
-import static constants.Constant.SUCCESSFUL_LOGIN;
-import static constants.Constant.SUCCESSFUL_REGISTRATION;
-import static constants.Constant.SUCCESSFUL_PLAYLIST_CREATION;
-import static constants.Constant.SUCCESSFUL_SONG_ADDITION;
-import static constants.Constant.SONG_NOT_FOUND;
-import static constants.Constant.UNSUCCESSFUL_PLAYLIST_SHOW;
-import static constants.Constant.STOP_SONG;
-import static constants.Constant.PRINT_USER;
-import static constants.Constant.SUCCESSFUL_LOGOUT;
-import static constants.Constant.HELP_TEXT;
-import static constants.Constant.BUFFER_SIZE;
-import static constants.Constant.PORT;
+import static communication.ConnectConstants.ONE;
+import static communication.ConnectConstants.TWO;
+import static communication.ConnectConstants.THREE;
+import static communication.ResponseConstants.SUCCESSFUL_LOGIN;
+import static communication.ResponseConstants.SUCCESSFUL_REGISTRATION;
+import static communication.ResponseConstants.SUCCESSFUL_PLAYLIST_CREATION;
+import static communication.ResponseConstants.SUCCESSFUL_SONG_ADDITION;
+import static communication.ResponseConstants.SONG_NOT_FOUND;
+import static communication.ResponseConstants.UNSUCCESSFUL_PLAYLIST_SHOW;
+import static communication.ResponseConstants.STOP_SONG;
+import static communication.ResponseConstants.PRINT_USER;
+import static communication.ResponseConstants.SUCCESSFUL_LOGOUT;
+import static communication.ResponseConstants.HELP_TEXT;
+import static communication.ConnectConstants.BUFFER_SIZE;
+import static communication.ConnectConstants.PORT;
 
 public class Server {
     private static ArrayList<User> users;
@@ -229,7 +230,7 @@ public class Server {
             configureClientChannel(clientChannel, selector);
         } else if (key.isReadable()) {
             SocketChannel clientChannel = (SocketChannel) key.channel();
-            ByteBuffer buffer = ByteBuffer.allocate(Integer.parseInt(BUFFER_SIZE.getValue()));
+            ByteBuffer buffer = ByteBuffer.allocate(Integer.parseInt(BUFFER_SIZE));
             try {
                 int bytesRead = clientChannel.read(buffer);
                 if (bytesRead == -1) {
@@ -245,10 +246,10 @@ public class Server {
                     bufferLogic(buffer, response);
                     clientChannel.write(buffer);
                 } catch (NumberFormatException e) {
-                    System.out.println("Invalid input received from client: " + receivedData);
+                    System.out.println("Invalid input received from communication.client: " + receivedData);
                 }
             } catch (IOException e) {
-                System.out.println("Error handling client: " + e.getMessage());
+                System.out.println("Error handling communication.client: " + e.getMessage());
                 closeConnection(clientChannel, key);
             }
         }
@@ -261,10 +262,10 @@ public class Server {
     }
 
     public void configureServerSocket(ServerSocketChannel serverSocket, Selector selector) throws IOException {
-        serverSocket.bind(new InetSocketAddress(Integer.parseInt(PORT.getValue())));
+        serverSocket.bind(new InetSocketAddress(Integer.parseInt(PORT)));
         serverSocket.configureBlocking(false);
         serverSocket.register(selector, SelectionKey.OP_ACCEPT);
-        System.out.println("Server started on port " + PORT.getValue());
+        System.out.println("Server started on port " + PORT);
     }
 
     public void configureClientChannel(SocketChannel clientChannel, Selector selector) throws IOException {

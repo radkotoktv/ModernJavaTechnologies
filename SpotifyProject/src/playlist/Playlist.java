@@ -6,7 +6,7 @@ import song.Song;
 import java.util.ArrayList;
 import java.util.Objects;
 
-import static constants.Constant.PLAYLISTS_PATH;
+import static communication.ConnectConstants.PLAYLISTS_PATH;
 
 public class Playlist {
     private final String name;

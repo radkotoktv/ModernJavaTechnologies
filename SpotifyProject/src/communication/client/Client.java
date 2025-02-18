@@ -1,4 +1,4 @@
-package client;
+package communication.client;
 
 import exception.DisconnectedFromServerException;
 import player.WavPlayer;
@@ -10,19 +10,18 @@ import java.nio.ByteBuffer;
 import java.nio.channels.SocketChannel;
 import java.util.Scanner;
 
-import static constants.Constant.ZERO;
-import static constants.Constant.ONE;
-import static constants.Constant.TWO;
-import static constants.Constant.THREE;
-import static constants.Constant.SUCCESSFUL_LOGIN;
-import static constants.Constant.SUCCESSFUL_LOGOUT;
-import static constants.Constant.UNSUCCESSFUL_PLAYLIST_SHOW;
-import static constants.Constant.SONG_NOT_FOUND;
-import static constants.Constant.STOP_SONG;
-import static constants.Constant.SERVER_HOST;
-import static constants.Constant.PORT;
-
-import static constants.Constant.BUFFER_SIZE;
+import static communication.ConnectConstants.ZERO;
+import static communication.ConnectConstants.ONE;
+import static communication.ConnectConstants.TWO;
+import static communication.ConnectConstants.THREE;
+import static communication.ResponseConstants.SUCCESSFUL_LOGIN;
+import static communication.ResponseConstants.SUCCESSFUL_LOGOUT;
+import static communication.ResponseConstants.UNSUCCESSFUL_PLAYLIST_SHOW;
+import static communication.ResponseConstants.SONG_NOT_FOUND;
+import static communication.ResponseConstants.STOP_SONG;
+import static communication.ConnectConstants.SERVER_HOST;
+import static communication.ConnectConstants.PORT;
+import static communication.ConnectConstants.BUFFER_SIZE;
 
 public class Client {
     private User currentUser;
@@ -118,7 +117,7 @@ public class Client {
 
     public void createClient() {
         try (SocketChannel socketChannel = SocketChannel.open(); Scanner scanner = new Scanner(System.in)) {
-            socketChannel.connect(new InetSocketAddress(SERVER_HOST.getValue(), Integer.parseInt(PORT.getValue())));
+            socketChannel.connect(new InetSocketAddress(SERVER_HOST, Integer.parseInt(PORT)));
             while (true) {
                 System.out.print("Enter a command: ");
                 String userInput = scanner.nextLine();
@@ -128,7 +127,7 @@ public class Client {
                 }
 
                 userInput += (currentUser != null ? " " + currentUser.email() : "");
-                ByteBuffer buffer = ByteBuffer.allocate(Integer.parseInt(BUFFER_SIZE.getValue()));
+                ByteBuffer buffer = ByteBuffer.allocate(Integer.parseInt(BUFFER_SIZE));
                 buffer.put(userInput.getBytes());
                 buffer.flip();
                 socketChannel.write(buffer);
@@ -143,7 +142,7 @@ public class Client {
                 }
             }
         } catch (IOException | InterruptedException e) {
-            throw new DisconnectedFromServerException("Disconnected from server!", e);
+            throw new DisconnectedFromServerException("Disconnected from communication.client.server!", e);
         }
     }
 }

@@ -1,4 +1,4 @@
-import server.Server;
+import communication.server.Server;
 
 import java.io.IOException;
 
