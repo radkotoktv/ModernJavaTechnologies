@@ -1,5 +1,7 @@
 package command;
 
+import static communication.ResponseConstants.DISCONNECT;
+
 public class DisconnectCommand extends Command {
     public DisconnectCommand(String[] args) {
         super(args);
@@ -7,6 +9,6 @@ public class DisconnectCommand extends Command {
 
     @Override
     public String execute() {
-        return "You have selected the disconnect option!" + System.lineSeparator();
+        return DISCONNECT + System.lineSeparator();
     }
 }

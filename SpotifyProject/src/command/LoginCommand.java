@@ -1,8 +1,10 @@
 package command;
 
+import hash.PasswordHasher;
 import user.User;
 
 import static communication.ResponseConstants.SUCCESSFUL_LOGIN;
+import static communication.ResponseConstants.NOT_FOUND_USER;
 
 public class LoginCommand extends Command {
     private final String password;
@@ -16,10 +18,16 @@ public class LoginCommand extends Command {
 
     @Override
     public String execute() {
-        User toLogin = new User(password, email);
-        if (!users.contains(toLogin)) {
-            return "User not found!";
+        User existingUser = users.stream()
+                .filter(u -> u.email().equals(email))
+                .findFirst()
+                .orElse(null);
+
+        if (existingUser == null) {
+            return NOT_FOUND_USER;
         }
-        return SUCCESSFUL_LOGIN;
+        boolean correctPassword = PasswordHasher.getInstance().verifyPassword(password, existingUser.password());
+
+        return !correctPassword ? NOT_FOUND_USER : SUCCESSFUL_LOGIN;
     }
 }

@@ -6,6 +6,7 @@ import playlist.Playlist;
 import java.util.List;
 
 import static communication.ConnectConstants.PLAYLISTS_PATH;
+import static communication.ResponseConstants.PLAYLIST_ALREADY_EXISTS;
 import static communication.ResponseConstants.SUCCESSFUL_PLAYLIST_CREATION;
 
 public class CreatePlaylistCommand extends Command {
@@ -27,7 +28,7 @@ public class CreatePlaylistCommand extends Command {
                 List.of(),
                 0);
         if (playlists.contains(newPlaylist)) {
-            return "Playlist already exists!";
+            return PLAYLIST_ALREADY_EXISTS;
         }
         playlists.add(newPlaylist);
         PlaylistWriter.getInstance(PLAYLISTS_PATH).writeToFile(newPlaylist);

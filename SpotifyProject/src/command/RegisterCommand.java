@@ -1,10 +1,12 @@
 package command;
 
 import file.writer.UserWriter;
+import hash.PasswordHasher;
 import user.User;
 
 import static communication.ConnectConstants.USERS_PATH;
 import static communication.ResponseConstants.SUCCESSFUL_REGISTRATION;
+import static communication.ResponseConstants.UNSUCCESSFUL_REGISTRATION;
 
 public class RegisterCommand extends Command {
     private final String password;
@@ -18,9 +20,11 @@ public class RegisterCommand extends Command {
 
     @Override
     public String execute() {
-        User newUser = new User(password, email);
+        String hashedPassword = PasswordHasher.getInstance().hashPassword(password);
+
+        User newUser = new User(hashedPassword, email);
         if (users.contains(newUser)) {
-            return "User already exists!";
+            return UNSUCCESSFUL_REGISTRATION;
         }
         users.add(newUser);
         UserWriter.getInstance(USERS_PATH).writeToFile(newUser);

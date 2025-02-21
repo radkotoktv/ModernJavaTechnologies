@@ -2,14 +2,22 @@ package communication;
 
 public class ResponseConstants {
     public static final String SUCCESSFUL_REGISTRATION = "You have been registered to the system!";
+    public static final String UNSUCCESSFUL_REGISTRATION = "User already exists!";
     public static final String SUCCESSFUL_LOGIN = "You have successfully logged in!";
+    public static final String NOT_FOUND_USER = "User not found!";
     public static final String SUCCESSFUL_SONG_ADDITION = "Song has been added successfully!";
+    public static final String SONG_ALREADY_INSIDE = "Song is already in the playlist!";
     public static final String SUCCESSFUL_PLAYLIST_CREATION = "Playlist has been created successfully!";
+    public static final String PLAYLIST_ALREADY_EXISTS = "Playlist already exists!";
+    public static final String DISCONNECT = "You have selected the disconnect option!";
     public static final String SUCCESSFUL_LOGOUT = "You have successfully logged out!";
     public static final String UNSUCCESSFUL_PLAYLIST_SHOW = "Playlist not found!";
     public static final String STOP_SONG = "Song has been stopped!";
     public static final String SONG_NOT_FOUND = "Song not found!";
+    public static final String PLAYLIST_NOT_FOUND = "Playlist not found!";
+    public static final String NO_PERMISSION = "You do not have permission to execute that command!";
     public static final String PRINT_USER = "Request the communication.client to print the current user's information.";
+    public static final String INVALID_COMMAND = "Invalid Command!";
     public static final String HELP_TEXT = "Available commands:" +
             System.lineSeparator() +
             "register <email> <password> - registers a new user" +

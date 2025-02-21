@@ -1,5 +1,7 @@
 package command;
 
+import static communication.ResponseConstants.INVALID_COMMAND;
+
 public class InvalidCommand extends Command {
     public InvalidCommand(String[] args) {
         super(args);
@@ -7,6 +9,6 @@ public class InvalidCommand extends Command {
 
     @Override
     public String execute() {
-        return "Invalid Command!";
+        return INVALID_COMMAND;
     }
 }

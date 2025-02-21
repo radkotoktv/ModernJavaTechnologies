@@ -1,14 +1,9 @@
 [
   {
-    "password": "parola123",
-    "email": "Ivan@gmail.com"
-  },
+    "password":"$2b$12$mEaN7/kKBx3AZwFcLMEc6.1p0c4El672YRGxHSTmx4ri.xU/eJVE2",
+    "email":"test@test.com"},
   {
-    "password": "parolatae123",
-    "email": "Maria@gmail.com"
-  },
-  {
-    "password": "MJT2025",
-    "email": "Stoyan@hotmail.com"
+    "password":"$2b$12$.T2amygwE.28YUTU/gOkWumz7r6LZFXXTRmOG1ryNVZzeIhSErsmS",
+    "email":"admin@gmail.com"
   }
 ]
