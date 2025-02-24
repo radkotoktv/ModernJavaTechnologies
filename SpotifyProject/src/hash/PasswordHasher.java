@@ -6,6 +6,7 @@ import com.password4j.Password;
 import com.password4j.types.Bcrypt;
 
 import static hash.HashingConstants.LOG_ROUNDS;
+import static hash.HashingConstants.PEPPER;
 
 public class PasswordHasher {
     private static volatile PasswordHasher instance;
@@ -30,7 +31,7 @@ public class PasswordHasher {
 
     public String hashPassword(String password) {
         Hash hash = Password.hash(password)
-                .addPepper("shared-secret")
+                .addPepper(PEPPER)
                 .with(bcrypt);
 
         return hash.getResult();
@@ -38,7 +39,7 @@ public class PasswordHasher {
 
     public boolean verifyPassword(String password, String hashedPassword) {
         return Password.check(password, hashedPassword)
-                .addPepper("shared-secret")
+                .addPepper(PEPPER)
                 .with(bcrypt);
     }
 }
