@@ -14,16 +14,16 @@ import java.io.File;
 import java.io.IOException;
 
 import static player.WAVPlayerConstants.WAV_BUFFER_SIZE;
+import static player.WAVPlayerConstants.WAV_PATH;
 
 public class WavPlayer implements Runnable {
     private final String fileName;
 
     public WavPlayer(String fileName) {
-        this.fileName = fileName;
+        this.fileName = WAV_PATH + fileName;
     }
 
     public void playWavFile(String filePath) {
-        filePath = "src/data/songs/" + filePath;
         File audioFile = new File(filePath);
 
         try (AudioInputStream audioStream = AudioSystem.getAudioInputStream(audioFile)) {
