@@ -2,6 +2,8 @@ package command;
 
 import song.Song;
 
+import java.util.List;
+
 import static communication.ResponseConstants.SONG_NOT_FOUND;
 
 public class PlayCommand extends Command {
@@ -9,6 +11,11 @@ public class PlayCommand extends Command {
 
     public PlayCommand(String[] args) {
         super(args);
+        songName = args[0];
+    }
+
+    public PlayCommand(String[] args, List<Song> songs) {
+        super(args, List.of(), songs, List.of());
         songName = args[0];
     }
 

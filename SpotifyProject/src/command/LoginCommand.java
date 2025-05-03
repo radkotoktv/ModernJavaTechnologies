@@ -3,6 +3,8 @@ package command;
 import hash.PasswordHasher;
 import user.User;
 
+import java.util.List;
+
 import static communication.ResponseConstants.SUCCESSFUL_LOGIN;
 import static communication.ResponseConstants.NOT_FOUND_USER;
 
@@ -12,6 +14,12 @@ public class LoginCommand extends Command {
 
     public LoginCommand(String[] args) {
         super(args);
+        password = args[0];
+        email = args[1];
+    }
+
+    public LoginCommand(String[] args, List<User> users) {
+        super(args, users, List.of(), List.of());
         password = args[0];
         email = args[1];
     }

@@ -1,8 +1,16 @@
 package command;
 
+import java.util.List;
+
+import song.Song;
+
 public class SearchCommand extends Command {
     public SearchCommand(String[] args) {
         super(args);
+    }
+
+    public SearchCommand(String[] args, List<Song> songs) {
+        super(args, List.of(), songs, List.of());
     }
 
     @Override

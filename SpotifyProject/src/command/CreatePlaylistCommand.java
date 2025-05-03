@@ -15,8 +15,14 @@ public class CreatePlaylistCommand extends Command {
 
     public CreatePlaylistCommand(String[] args) {
         super(args);
-        this.name = args[0];
-        this.owner = args[1];
+        name = args[0];
+        owner = args[1];
+    }
+
+    public CreatePlaylistCommand(String[] args, List<Playlist> playlists) {
+        super(args, List.of(), List.of(), playlists);
+        name = args[0];
+        owner = args[1];
     }
 
     @Override
@@ -27,7 +33,10 @@ public class CreatePlaylistCommand extends Command {
                 0,
                 List.of(),
                 0);
-        if (playlists.contains(newPlaylist)) {
+        boolean alreadyExists = playlists.stream()
+                .anyMatch(p -> p.name().equals(name));
+
+        if (alreadyExists) {
             return PLAYLIST_ALREADY_EXISTS;
         }
         playlists.add(newPlaylist);

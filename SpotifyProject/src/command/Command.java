@@ -26,6 +26,14 @@ public abstract class Command {
         this.playlists = PlaylistReader.getInstance(PLAYLISTS_PATH).readFromFile();
     }
 
+    // Constructor with parameters for cleaner testing
+    public Command(String[] args, List<User> users, List<Song> songs, List<Playlist> playlists) {
+        this.args = args;
+        this.users = users;
+        this.songs = songs;
+        this.playlists = playlists;
+    }
+
     public static Command handleCommand(String[] command) {
         String[] args = new String[command.length - 1];
         System.arraycopy(command, 1, args, 0, command.length - 1);

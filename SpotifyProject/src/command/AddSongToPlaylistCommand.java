@@ -3,6 +3,8 @@ package command;
 import playlist.Playlist;
 import song.Song;
 
+import java.util.List;
+
 import static communication.ResponseConstants.SONG_NOT_FOUND;
 import static communication.ResponseConstants.SUCCESSFUL_SONG_ADDITION;
 import static communication.ResponseConstants.SONG_ALREADY_INSIDE;
@@ -16,6 +18,13 @@ public class AddSongToPlaylistCommand extends Command {
 
     public AddSongToPlaylistCommand(String[] args) {
         super(args);
+        playlistName = args[0];
+        songName = args[1];
+        ownerEmail = args[2];
+    }
+
+    public AddSongToPlaylistCommand(String[] args, List<Song> songs, List<Playlist> playlists) {
+        super(args, List.of(), songs, playlists);
         playlistName = args[0];
         songName = args[1];
         ownerEmail = args[2];
